@@ -15,6 +15,7 @@ main (){
     task 'component-planner.*'
     task 'macroff.*'
     task 'fd-benchmark.*'
+    task 'doubling.*'
 }
 
 time main

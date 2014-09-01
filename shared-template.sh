@@ -6,7 +6,7 @@ options=$2
 cat <<EOF
 #!/bin/bash
 
-tmp=\$(mktemp --tmpdir -d fd-benchmark.XXXXXXX)
+tmp=\$(mktemp --tmpdir -d doubling.XXXXXXX)
 
 copy(){
 

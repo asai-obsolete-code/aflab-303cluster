@@ -21,6 +21,7 @@ find /tmp \
     -regex '/tmp/component-planner.*' -o \
     -regex '/tmp/macroff.*' -o \
     -regex '/tmp/.*lisptmp.*' \
+    -regex '/tmp/doubling.*' \
     -prune > $list
 
 tar czvf $(fn)-tmp-$(hostname).tar.gz -T $list
