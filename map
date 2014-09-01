@@ -1,0 +1,31 @@
+#!/bin/bash
+#-*- mode:sh -*-
+
+PARALLEL=false
+while getopts ":p" opt
+do
+    case ${opt} in
+        p)  PARALLEL=true ;
+            echo "Invoking ssh in parallel."
+            ;;
+        \?) OPT_ERROR=1; break;;
+        * ) echo "unsupported option $opt" ;;
+    esac
+done
+
+shift $(($OPTIND - 1))
+
+nodes="001 002 003 004 005 007"
+commands=$@
+for node in $nodes
+do
+    echo "logging in to fun$node..."
+    if $PARALLEL
+    then
+        ssh fun$node "cd $PWD; $commands > $(hostname).log" &
+    else
+        ssh -t fun$node "cd $PWD; $commands"
+    fi
+done
+
+wait

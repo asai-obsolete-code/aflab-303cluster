@@ -1,0 +1,2 @@
+#! /bin/bash
+watch ./map ./ps-per-node.sh
