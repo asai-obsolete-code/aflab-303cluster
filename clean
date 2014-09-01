@@ -1,6 +1,6 @@
 #!/bin/bash
 #-*- mode:sh -*-
-git clean -xf $(for bin in $(ls component-planner*)
+git clean -xf $(for bin in $(ls component-planner* *.sh)
     do
     echo "-e $bin"
     done)
