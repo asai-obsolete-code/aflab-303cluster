@@ -1,0 +1,16 @@
+*.sas
+*.sasp
+*.cost
+*.time
+*.plan.*
+*.plan
+*.log
+*.err
+*~
+#*
+*.qsub
+*.qsub.*
+/component-planner*
+*.summary
+*.[eo][0-9]*
+

@@ -1,0 +1,15 @@
+
+
+"run.sh" and "lama.sh" is a sample script for templating many qsub request.
+
+: ./qsub-template.sh -r "-P 4 -t 1800 -T 3600 -m 2000000 -M 8000000" lama.sh
+
++ "run.sh" calls qsub-template.sh. In run.sh, list the template files and
+  resource iteration boundary.
+  + here, iteration boundary is specified by -r option, and lama.sh is the
+    qsub generation script.
++ qsub-template.sh calls lama.sh iterating over pddl problem files starting
+  with "pXX" in all the subdirectories.
++ lama.sh is actually a thin wrapper that calls shared-template.sh in turn,
+  which is the true generation script.
+
