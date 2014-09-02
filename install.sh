@@ -1,3 +1,12 @@
 #!/bin/bash
 
-ls -1 $(dirname $0) | while read line ; do ln -s $(dirname $0)/$line ; done
+dir=$(dirname $0)
+
+pushd $dir
+scripts=$(git ls-files | grep -v ".*/.*")
+popd
+
+for f in $scripts
+do
+    ln -s $dir/$f
+done
