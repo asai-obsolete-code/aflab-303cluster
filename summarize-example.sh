@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#### 
+#### Use this file as a template for writing a result summarizer script.
+#### 
+
 source summarize.sh
 
 # list of useful variables:
@@ -26,6 +30,7 @@ source summarize.sh
 
 # echorun : echo and do
 # wrap : wrap with ()
+# main : map over directories,problems and configurations
 
 parproblem (){
     log=$probname.$config.log
