@@ -2,7 +2,7 @@
 
 #### 
 #### Use this file as a template for writing a result summarizer script.
-#### 
+#### This file is originally written for gathering the results of lama planner.
 
 source summarize.sh
 
