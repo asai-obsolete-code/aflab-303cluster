@@ -8,8 +8,6 @@ export config
 export solver
 export time
 export mem
-export -f echorun
-export -f wrap
 
 echorun(){
     # echo $*
@@ -21,6 +19,9 @@ wrap (){                        # lisp hack !!!
     $@
     echo -n ")"
 }
+
+export -f echorun
+export -f wrap
 
 main (){
     time mapdir mapprob mapconf $@
