@@ -1,8 +1,15 @@
 #!/bin/bash
 
-export track
 export dirname
 export problem
+export pnum
+export probname
+export config
+export solver
+export time
+export mem
+export -f echorun
+export -f wrap
 
 echorun(){
     # echo $*
