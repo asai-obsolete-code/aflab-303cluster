@@ -9,6 +9,7 @@ source summarize.sh
 # list of useful variables:
 
 # dirname
+# domname
 # problem
 # pnum
 # probname

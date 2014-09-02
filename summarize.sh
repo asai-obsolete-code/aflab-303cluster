@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export dirname
+export domname
 export problem
 export pnum
 export probname
@@ -30,6 +31,8 @@ main (){
 mapdir (){
     for dirname in $(ls -d */)
     do
+        dirname=$(readlink -ef $dirname) # no trailing slash
+        domname=$(basename $dirname)
         if [[ $dirname =~ .*planner-scripts.* ]]
         then
             echo "ignoring $dir ..." >&2
