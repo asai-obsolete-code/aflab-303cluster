@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source summarize.sh
+
 # list of useful variables:
 
 # dirname
