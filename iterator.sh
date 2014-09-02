@@ -29,24 +29,24 @@ mykill (){
 }
 
 twice-time (){
-    echo "Current iteration failed! Doubling the time..." >&2
+    echo "Current iteration failed! time=$time, maxtime=$maxtime, Doubling the time..." >&2
     ntime=$(( 2 * $time ))
     if [[ $ntime -gt $maxtime ]]
     then
-        echo "Failed on time=$time, maxtime=$maxtime, no more iteration!" >&2
-        exit 1
+        echo "Failed, no more iteration!" >&2
+        exit 4
     fi
     time=$ntime
     next
 }
 
 twice-mem (){
-    echo "Current iteration failed! Doubling the memory..." >&2
+    echo "Current iteration failed! mem=$mem, maxmem=$maxmem, Doubling the memory..." >&2
     nmem=$(( 2 * $mem ))
     if [[ $nmem -gt $maxmem ]]
     then
-        echo "Failed on mem=$mem, maxmem=$maxmem, no more iteration!" >&2
-        exit 1
+        echo "Failed, no more iteration!" >&2
+        exit 5
     fi
     mem=$nmem
     next
@@ -54,8 +54,8 @@ twice-mem (){
 
 finalize (){
     echo
-    echo real $(($(< $cgcpu/cpuacct.usage) / 1000000))
-    echo maxmem $(( $(< $cgmem/memory.max_usage_in_bytes) / 1024 ))
+    echo "real $(($(< $cgcpu/cpuacct.usage) / 1000000)) (msec.)"
+    echo "maxmem $(( $(< $cgmem/memory.max_usage_in_bytes) / 1024 )) (kB)"
     rmdir $cgcpu
     rmdir $cgmem
     rm -f $finished
@@ -99,7 +99,7 @@ case $(< $finished) in
                 echo "cpuacct.usage exceeding. $cpuusage msec."
                 mykill
                 twice-time
-                break
+                exit 2
             fi
             memusage=$(( $(< $cgmem/memory.max_usage_in_bytes) / 1024 ))
             if [[ $memusage -gt $mem ]]
@@ -107,7 +107,7 @@ case $(< $finished) in
                 echo "memory.max_usage_in_bytes exceeding. $memusage kB."
                 mykill
                 twice-mem
-                break
+                exit 3
             fi
         done
         echo Process successfully finished under the limit!
