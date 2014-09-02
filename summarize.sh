@@ -17,7 +17,8 @@ echorun(){
 
 wrap (){                        # lisp hack !!!
     echo -n "("
-    $@
+    echo $* >&2
+    eval $*
     echo -n ")"
 }
 
@@ -39,7 +40,7 @@ mapdir (){
             continue
         fi
         pushd $dirname &> /dev/null
-        wrap $@
+        wrap "echo $domname ; $@"
         popd &> /dev/null
     done
 }
@@ -53,7 +54,7 @@ mapprob (){
     do
         probname=p$pnum
         problem=$(readlink -ef $probname.pddl)
-        wrap $@
+        wrap "echo $probname ; $@"
     done
 }
 
@@ -63,10 +64,10 @@ mapprob (){
 mapconf (){
     for config in $(ls $probname.*.err | sed -e "s/$probname\.\(.*\)\.err/\1/g")
     do
-        solver=$(echo $config | sed -e "s/\(.*\)-\([0^9]*\)-\([0-9]*\)/\1/g")
-        time=$(echo $config | sed -e "s/\(.*\)-\([0^9]*\)-\([0-9]*\)/\2/g")
-        mem=$(echo $config | sed -e "s/\(.*\)-\([0^9]*\)-\([0-9]*\)/\3/g")
-        wrap $@
+        solver=$(echo $config | sed -e "s/\(.*\)-\([0-9]*\)-\([0-9]*\)/\1/g")
+        time=$(echo $config | sed -e "s/\(.*\)-\([0-9]*\)-\([0-9]*\)/\2/g")
+        mem=$(echo $config | sed -e "s/\(.*\)-\([0-9]*\)-\([0-9]*\)/\3/g")
+        wrap "echo -n '$solver $time $mem '; $@"
     done
 }
 
