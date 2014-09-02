@@ -9,6 +9,7 @@ export config
 export solver
 export time
 export mem
+export filter
 
 echorun(){
     # echo $*
@@ -67,7 +68,10 @@ mapconf (){
         solver=$(echo $config | sed -e "s/\(.*\)-\([0-9]*\)-\([0-9]*\)/\1/g")
         time=$(echo $config | sed -e "s/\(.*\)-\([0-9]*\)-\([0-9]*\)/\2/g")
         mem=$(echo $config | sed -e "s/\(.*\)-\([0-9]*\)-\([0-9]*\)/\3/g")
-        wrap "echo -n '$solver $time $mem '; $@"
+        if [[ $config =~ $filter ]]
+        then
+            wrap "echo -n '$solver $time $mem '; $@"
+        fi
     done
 }
 

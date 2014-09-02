@@ -17,6 +17,7 @@ source summarize.sh
 # solver
 # time
 # mem
+# filter -- filters the config. example: "lmcut-.*"
 
 # p01.lmcut-1800-2000000.err
 #     ^solver
