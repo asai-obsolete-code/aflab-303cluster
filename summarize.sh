@@ -17,7 +17,7 @@ echorun(){
 
 wrap (){                        # lisp hack !!!
     echo -n "("
-    echo $* >&2
+    ## echo $* >&2 # for debugging
     eval $*
     echo -n ")"
 }
