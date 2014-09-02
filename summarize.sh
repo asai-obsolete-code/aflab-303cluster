@@ -58,8 +58,8 @@ lambda (){
     echo "#!/bin/bash" > $sym
     localdefs $args >> $sym
     echo "{ $* ;}" >> $sym
-    echo "defining lambda in $sym:" >&2
-    cat $sym >&2
+    # echo "defining lambda in $sym:" >&2
+    # cat $sym >&2
     chmod +x $sym
     echo $sym
 }
