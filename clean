@@ -20,6 +20,8 @@ git clean -xf $(for bin in $(ls component-planner* README.org \
         remove-per-node.sh \
         remove-temp.sh \
         shared-template.sh \
+        summarize.sh \
+        summarize-example.sh \
         simple-test.sh \
         tarai.lisp \
         test-doubling.sh \

@@ -12,12 +12,12 @@ export mem
 export filter
 
 map (){
-    local pred=$1
-    local first=$2
-    shift 2
-    echo $($pred $first)
-    if [[ $1 != "" ]]
+    if [[ $2 != "" ]]
     then
+        local pred=$1
+        local first=$2
+        shift 2
+        echo $($pred $first)
         map $pred $@
     fi
 }
@@ -101,7 +101,7 @@ mapdir (){
             continue
         fi
         pushd $dirname &> /dev/null
-        wrap "echo $domname ; $@"
+        $@
         popd &> /dev/null
     done
 }
@@ -115,7 +115,7 @@ mapprob (){
     do
         probname=p$pnum
         problem=$(readlink -ef $probname.pddl)
-        wrap "echo $probname ; $@"
+        $@
     done
 }
 
@@ -130,7 +130,7 @@ mapconf (){
         mem=$(echo $config | sed -e "s/\(.*\)-\([0-9]*\)-\([0-9]*\)/\3/g")
         if [[ $config =~ $filter ]]
         then
-            wrap "echo -n '$solver $time $mem '; $@"
+            $@
         fi
     done
 }
