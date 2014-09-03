@@ -1,5 +1,13 @@
 #!/bin/bash
 
+if [[ $2 == "" ]]
+then
+    cat >&2 <<EOF
+Usage: shared-template.sh binary options
+EOF
+    exit 1
+fi
+
 binary=$(readlink -ef $1)
 options=$2
 
@@ -9,26 +17,22 @@ options=$2
 # 3. copy back the result plan/log files to the original directory
 #    appending the appropriate name for the job and the configuration
 
-cat <<EOF
-#!/bin/bash
+if [[ $problem == "" ]]
+then
+    echo '$problem not specified!' >&2
+    exit 1
+fi
+if [[ $outname == "" ]]
+then
+    echo '$outname not specified!' >&2
+    exit 1
+fi
+if [[ $probname == "" ]]
+then
+    echo '$probname not specified!' >&2
+    probname=$(basename $problem)
+fi
 
-tmp=\$(mktemp --tmpdir -d doubling.XXXXXXX)
-
-copy(){
-
-for plan in \$tmp/*.plan* \$tmp/*.log
-do
-    planname=\$(basename \$plan)
-    cp \$plan $(dirname $problem)/$outname.\${planname##*$probname.}
-done
-}
-
-trap "copy" EXIT
-
-cp $problem \$tmp/
-cp $(dirname $problem)/domain.pddl \$tmp/
-
-pushd \$tmp
-$binary $options $probname.pddl domain.pddl
-popd
-EOF
+eval "cat <<EOF
+$(< template.sh)
+EOF"

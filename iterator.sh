@@ -17,52 +17,49 @@ pid=
 
 sleep=10
 mykill (){
-    echodo kill -s SIGXCPU $pid
+    echodo kill -s SIGXCPU $1
     sleep $sleep
-    ps $pid &> /dev/null && {
-        echodo kill -s SIGTERM $pid
+    ps $1 &> /dev/null && {
+        echodo kill -s SIGTERM $1
         sleep $sleep
-        ps $pid &> /dev/null && {
-            echodo kill -s SIGKILL $pid
+        ps $1 &> /dev/null && {
+            echodo kill -s SIGKILL $1
         }
     }
 }
 
 twice-time (){
-    echo "Current iteration failed! time=$time, maxtime=$maxtime, Doubling the time..." >&2
-    ntime=$(( 2 * $time ))
+    echo "Current iteration failed! Doubling the time..." >&2
+    local ntime=$(( 2 * $time ))
     if [[ $ntime -gt $maxtime ]]
     then
         echo "Failed, no more iteration!" >&2
-        exit 4
+    else
+        time=$ntime
+        next                    # throw the next job
     fi
-    time=$ntime
-    next
 }
 
 twice-mem (){
-    echo "Current iteration failed! mem=$mem, maxmem=$maxmem, Doubling the memory..." >&2
+    echo "Current iteration failed! Doubling the memory..." >&2
     nmem=$(( 2 * $mem ))
     if [[ $nmem -gt $maxmem ]]
     then
         echo "Failed, no more iteration!" >&2
-        exit 5
+    else
+        mem=$nmem
+        next                    # throw the next job
     fi
-    mem=$nmem
-    next
 }
 
 finalize (){
-    echo
-    echo "real $(($(< $cgcpu/cpuacct.usage) / 1000000)) (msec.)"
-    echo "maxmem $(( $(< $cgmem/memory.max_usage_in_bytes) / 1024 )) (kB)"
-    rmdir $cgcpu
-    rmdir $cgmem
-    rm -f $finished
+    echo "real $(($(< $cgcpu/cpuacct.usage) / 1000000)) (msec.)" > $outname.stat
+    echo "maxmem $(( $(< $cgmem/memory.max_usage_in_bytes) / 1024 )) (kB)" > $outname.stat
+    rmdir -f $cgcpu
+    rmdir -f $cgmem
 }
 
 trap finalize EXIT
-
 
 for i in {0..20}
 do
@@ -73,44 +70,43 @@ do
     sleep 3
 done
 
-echo Current resource limit: time: $time memory: $mem
 export time mem maxtime maxmem maxcpu cgname cgcpu
-finished=$(mktemp)
-( cgexec -g cpuacct,memory:$ccgname $command ; echo $? > $finished ) &
+cgexec -g cpuacct,memory:$ccgname $command &
 pid=$!
 
-case $(< $finished) in
+cpuusage=$(($(< $cgcpu/cpuacct.usage) / 1000000))
+memusage=$(( $(< $cgmem/memory.max_usage_in_bytes) / 1024 ))
+
+while ps $pid &> /dev/null
+do
+    sleep 1
+    cpuusage=$(($(< $cgcpu/cpuacct.usage) / 1000000))
+    if [[ $cpuusage -gt ${time}000 ]]
+    then
+        echo "cpuacct.usage exceeding. $cpuusage msec." >&2
+        mykill $pid
+        twice-time
+        break
+    fi
+    memusage=$(( $(< $cgmem/memory.max_usage_in_bytes) / 1024 ))
+    if [[ $memusage -gt $mem ]]
+    then
+        echo "memory.max_usage_in_bytes exceeding. $memusage kB." >&2
+        mykill $pid
+        twice-mem
+        break
+    fi
+done
+
+wait $pid
+exitstatus=$?
+
+case $exitstatus in
     0)
-        echo The program successfully finished
-        echo immediately before the resource check loop started.
-        ;;
-    1)
-        echo Error occured. The program finished
-        echo immediately before the resource check loop started.
-        echo Consider increasing the initial resource limit for the iteration.
+        echo The program successfully finished.
         ;;
     *)
-        while ps $pid &> /dev/null
-        do
-            sleep 1
-            cpuusage=$(($(< $cgcpu/cpuacct.usage) / 1000000))
-            if [[ $cpuusage -gt ${time}000 ]]
-            then
-                echo "cpuacct.usage exceeding. $cpuusage msec."
-                mykill
-                twice-time
-                exit 2
-            fi
-            memusage=$(( $(< $cgmem/memory.max_usage_in_bytes) / 1024 ))
-            if [[ $memusage -gt $mem ]]
-            then
-                echo "memory.max_usage_in_bytes exceeding. $memusage kB."
-                mykill
-                twice-mem
-                exit 3
-            fi
-        done
-        echo Process successfully finished under the limit!
+        echo Error occured. status: $exitstatus
         ;;
 esac
 

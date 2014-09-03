@@ -49,15 +49,15 @@ do
     $generator $(readlink -ef $problem) > $qsub
     chmod +x $qsub
     
-    script=$(echo "./doubling-qsub.sh $resources \
-      -- -N $jobname -e $pdir/$outname.err -o $pdir/$outname.log $qsub")
-
+    script=$(echo 
+        ./doubling-qsub.sh $resources --
+        -N $jobname
+        -e $pdir/$outname.err
+        -o $pdir/$outname.log $qsub)
+    echo $script
     if $run
     then
-        echo $script
         $script
-    else
-        echo $script
     fi
 done
 

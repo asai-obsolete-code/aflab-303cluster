@@ -35,7 +35,8 @@ then
     cgname=$(whoami)
 fi 
 echo "Ensuring cgroup $cgname exists."
-cgcreate -t $(whoami):$(whoami) -a $(whoami):$(whoami) -g cpuacct,memory:$cgname  # might complain, but usually it is successful
+cgcreate -t $(whoami):$(whoami) -a $(whoami):$(whoami) -g cpuacct,memory:$cgname
+# might complain, but usually it is successful
 
 ################################################################ 
 #### parsing qsub options

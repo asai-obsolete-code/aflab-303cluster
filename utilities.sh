@@ -37,6 +37,9 @@ dkvs(){                         # debug
     for x in $@ ; do dkv $x ; done
 }
 
+exportargs="mem maxmem time maxtime maxcpu \
+    cgname debug dir command optfile outname"
+
 next(){
     cd $dir
     ppn=$(($mem / ( $maxmem / $maxcpu )))
@@ -45,6 +48,6 @@ next(){
     echodo qsub -l mem=$((200000 + $mem )),pmem=$((200000 + $mem )) \
         -l walltime=$(( 300 + $time )) \
         -l nodes=1:ppn=$ppn \
-        $(kvs mem maxmem time maxtime maxcpu cgname debug dir command optfile) \
+        $(kvs $exportargs) \
         $(eval "echo $(< $optfile)") iterator.sh
 }
