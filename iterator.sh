@@ -30,33 +30,36 @@ mykill (){
 
 twice-time (){
     echo "Current iteration failed! Doubling the time..." >&2
-    local ntime=$(( 2 * $time ))
-    if [[ $ntime -gt $maxtime ]]
-    then
-        echo "Failed, no more iteration!" >&2
-    else
-        time=$ntime
-        next                    # throw the next job
-    fi
+    (
+        time=$(( 2 * $time ))
+        if [[ $time -gt $maxtime ]]
+        then
+            echo "Failed, no more iteration!" >&2
+        else
+            next                    # throw the next job
+        fi
+    )
 }
 
 twice-mem (){
     echo "Current iteration failed! Doubling the memory..." >&2
-    nmem=$(( 2 * $mem ))
-    if [[ $nmem -gt $maxmem ]]
-    then
-        echo "Failed, no more iteration!" >&2
-    else
-        mem=$nmem
-        next                    # throw the next job
-    fi
+    ( 
+        mem=$(( 2 * $mem ))
+        if [[ $mem -gt $maxmem ]]
+        then
+            echo "Failed, no more iteration!" >&2
+        else
+            next                    # throw the next job
+        fi
+    )
 }
 
 finalize (){
-    echo "real $(($(< $cgcpu/cpuacct.usage) / 1000000)) (msec.)" > $outname.stat
-    echo "maxmem $(( $(< $cgmem/memory.max_usage_in_bytes) / 1024 )) (kB)" > $outname.stat
-    rmdir -f $cgcpu
-    rmdir -f $cgmem
+    local stat=$(eval "echo $outname.stat")
+    echo "real $cpuusage (msec.)" >> $stat
+    echo "maxmem $memusage (kB)" >> $stat
+    rmdir $cgcpu
+    rmdir $cgmem
 }
 
 trap finalize EXIT
@@ -81,6 +84,7 @@ while ps $pid &> /dev/null
 do
     sleep 1
     cpuusage=$(($(< $cgcpu/cpuacct.usage) / 1000000))
+    memusage=$(( $(< $cgmem/memory.max_usage_in_bytes) / 1024 ))
     if [[ $cpuusage -gt ${time}000 ]]
     then
         echo "cpuacct.usage exceeding. $cpuusage msec." >&2
@@ -88,7 +92,6 @@ do
         twice-time
         break
     fi
-    memusage=$(( $(< $cgmem/memory.max_usage_in_bytes) / 1024 ))
     if [[ $memusage -gt $mem ]]
     then
         echo "memory.max_usage_in_bytes exceeding. $memusage kB." >&2
@@ -109,4 +112,5 @@ case $exitstatus in
         echo Error occured. status: $exitstatus
         ;;
 esac
+
 
