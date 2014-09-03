@@ -39,8 +39,7 @@ do
         continue
     fi
     export problem=$(readlink -ef $problem)
-    echo $problem $(dirname $problem)
-    pdir=$(dirname $problem)
+    export pdir=$(dirname $problem)
     export qsub=${problem%.pddl}.$gen_name.qsub
     export probname=$(basename $problem .pddl)
     export domname=$(basename $pdir | cut -c 1-4)

@@ -38,7 +38,7 @@ dkvs(){                         # debug
 }
 
 exportargs="mem maxmem time maxtime maxcpu \
-    cgname debug dir command optfile outname"
+    cgname debug dir command optfile outname pdir"
 
 next(){
     cd $dir

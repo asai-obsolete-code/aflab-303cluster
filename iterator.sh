@@ -55,7 +55,7 @@ twice-mem (){
 }
 
 finalize (){
-    local stat=$(eval "echo $outname.stat")
+    local stat=$(eval "echo $pdir/$outname.stat")
     echo "real $cpuusage (msec.)" >> $stat
     echo "maxmem $memusage (kB)" >> $stat
     rmdir $cgcpu
