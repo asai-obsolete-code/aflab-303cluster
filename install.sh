@@ -3,7 +3,7 @@
 dir=$(dirname $0)
 
 pushd $dir
-scripts=$(git ls-files | grep -v ".*/.*")
+scripts=$(git ls-files | grep -v ".*/.*" | grep -v "^\.[^\]*")
 popd
 
 for f in $scripts

@@ -44,16 +44,16 @@ do
     export qsub=${problem%.pddl}.$gen_name.qsub
     export probname=$(basename $problem .pddl)
     export domname=$(basename $pdir | cut -c 1-4)
-    export jobname="$gen_name-$probname-$domname-\$time-\$mem"
-    export outname="$probname.$gen_name-\$time-\$mem"
+    export jobname="$gen_name.$probname.$domname.\$time.\$mem"
+    export outname="$probname.$gen_name.\$time.\$mem"
     $generator $(readlink -ef $problem) > $qsub
     chmod +x $qsub
     
-    script=$(echo 
-        ./doubling-qsub.sh $resources --
-        -N $jobname
-        -e $pdir/$outname.err
-        -o $pdir/$outname.log $qsub)
+    script=$(echo \
+        ./doubling-qsub.sh $resources -- \
+        -N $jobname \
+        -e $pdir/$outname.err \
+        -o $pdir/$outname.log $qsub )
     echo $script
     if $run
     then
