@@ -44,4 +44,4 @@ parproblem (){
 }
 
 # example:
-main parproblem > total.summary
+main lama-* parproblem > total.summary

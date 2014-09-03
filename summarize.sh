@@ -91,7 +91,9 @@ export -f echorun
 export -f wrap
 
 main (){
-    time mapdir mapprob mapconf $@
+    filter=$1
+    shift
+    time mapdir mapprob mapconf $@ | sed -e 's/()//g'
 }
 
 mapdir (){
@@ -129,9 +131,9 @@ mapprob (){
 mapconf (){
     for config in $(ls $probname.*.err | sed -e "s/$probname\.\(.*\)\.err/\1/g")
     do
-        solver=$(echo $config | sed -e "s/\(.*\)-\([0-9]*\)-\([0-9]*\)/\1/g")
-        time=$(echo $config | sed -e "s/\(.*\)-\([0-9]*\)-\([0-9]*\)/\2/g")
-        mem=$(echo $config | sed -e "s/\(.*\)-\([0-9]*\)-\([0-9]*\)/\3/g")
+        solver=$(echo $config | cut -d- -f 1 )
+        time=$(echo $config | cut -d- -f 2 )
+        mem=$(echo $config | cut -d- -f 3 )
         if [[ $config =~ $filter ]]
         then
             $@
