@@ -138,8 +138,8 @@ mapconf (){
         err=$probname.$config.err
         stat=$probname.$config.stat
         length=$(min $(map countline $(ls $probname.$config.plan*)))
-        time=$(grep "^real" $stat | cut -d " " -f 2)
-        mem=$(grep "^maxmem" $stat | cut -d " " -f 2)
+        elapsed=$(grep "^real" $stat | cut -d " " -f 2)
+        usage=$(grep "^maxmem" $stat | cut -d " " -f 2)
         if $pred
         then
             $@

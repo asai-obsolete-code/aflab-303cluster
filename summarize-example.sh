@@ -17,9 +17,16 @@ source summarize.sh
 # solver
 # time
 # mem
-# filter -- filters the config. example: "lmcut-.*"
+# log
+# err
+# stat
+# elapsed -- elapsed time
+# usage -- memory usage
+# length -- min plan length
 
-# p01.lmcut-1800-2000000.err
+# p01.lmcut-1800-2000000.log : $log
+# p01.lmcut-1800-2000000.err : $err
+# p01.lmcut-1800-2000000.stat : $stat
 #     ^solver
 #           ^time
 #                ^mem
@@ -35,13 +42,9 @@ source summarize.sh
 # main : map over directories,problems and configurations
 
 parproblem (){
-    log=$probname.$config.log
-    err=$probname.$config.err
     cost=$(grep "Best solution cost so far" $log | tail -n 1 | sed -e 's/Best solution cost so far: \([0-9.]*\)$/\1/g')
-    elapsed=$(grep "real" $err | sed -e "s/real \([0-9.]*\)$/\1/g")
-    usage=$(grep "maxmem" $err | sed -e "s/maxmem \([0-9.]*\)$/\1/g")
-    echo -n "$name ${cost:=-1} ${elapsed:=-1} ${usage:=-1}"
+    echo -n "$solver $time $mem $name ${cost:=-1} ${length:=-1} ${elapsed:=-1} ${usage:=-1}"
 }
 
 # example:
-main lama-* parproblem > total.summary
+main $(lambda -- '[[ $solver == lama && $elapsed -lt 1800 ]]' parproblem > total.summary
