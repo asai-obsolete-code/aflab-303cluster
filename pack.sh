@@ -13,9 +13,12 @@ fn (){
     date +"%m-%d-%Y"
 }
 
+targets (){
+    ls -d */ | grep -v planner-scripts
+}
 
 echo $(fn)
 
-tar czf $(fn).tar.gz $(ls -d */)
+tar czf $(fn).tar.gz $(targets)
 
 mv -vf *.tar.gz ../results/
