@@ -43,8 +43,8 @@ source summarize.sh
 
 parproblem (){
     cost=$(grep "Best solution cost so far" $log | tail -n 1 | sed -e 's/Best solution cost so far: \([0-9.]*\)$/\1/g')
-    echo -n "$solver $time $mem $name ${cost:=-1} ${length:=-1} ${elapsed:=-1} ${usage:=-1}"
+    echo "($domname $probname $solver $time $mem ${cost:=-1} ${length:=-1} ${elapsed:=-1} ${usage:=-1})"
 }
 
 # example:
-main $(lambda -- '[[ $solver == lama && $elapsed -lt 1800 ]]' parproblem > total.summary
+main $(lambda -- '[[ $solver == lama && $elapsed -lt 1800000 ]]') parproblem | tee total.summary

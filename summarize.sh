@@ -1,16 +1,5 @@
 #!/bin/bash
 
-export dirname
-export domname
-export problem
-export pnum
-export probname
-export config
-export solver
-export time
-export mem
-export filter
-
 map (){
     if [[ $2 != "" ]]
     then
@@ -91,19 +80,20 @@ export -f echorun
 export -f wrap
 
 main (){
-    pred=$1
+    echo $* >&2
+    export pred=$1
     shift
-    time mapdir mapprob mapconf $@ | sed -e 's/()//g'
+    time ( mapdir mapprob mapconf $@ | sed -e 's/()//g' )
 }
 
 mapdir (){
     for dirname in $(ls -d */)
     do
-        dirname=$(readlink -ef $dirname) # no trailing slash
-        domname=$(basename $dirname)
+        export dirname=$(readlink -ef $dirname) # no trailing slash
+        export domname=$(basename $dirname)
         if [[ $dirname =~ .*planner-scripts.* ]]
         then
-            echo "ignoring $dir ..." >&2
+            echo "ignoring $dirname ..." >&2
             continue
         fi
         pushd $dirname &> /dev/null
@@ -119,8 +109,9 @@ mapprob (){
             sort -g | \
             while read pnum ;
     do
-        probname=p$pnum
-        problem=$(readlink -ef $probname.pddl)
+        export pnum
+        export probname=p$pnum
+        export problem=$(readlink -ef $probname.pddl)
         $@
     done
 }
@@ -129,17 +120,19 @@ mapprob (){
 # p01.lmcut-1800-2000000.err
 
 mapconf (){
-    for config in $(ls $probname.*.err | sed -e "s/$probname\.\(.*\)\.err/\1/g")
+    for config in $(map $(lambda x -- 'echo $x | cut -d. -f 2-4') \
+                        $(ls $probname.*.err 2>/dev/null ))
     do
-        solver=$(echo $config | cut -d- -f 1 )
-        time=$(echo $config | cut -d- -f 2 )
-        mem=$(echo $config | cut -d- -f 3 )
-        log=$probname.$config.log
-        err=$probname.$config.err
-        stat=$probname.$config.stat
-        length=$(min $(map countline $(ls $probname.$config.plan*)))
-        elapsed=$(grep "^real" $stat | cut -d " " -f 2)
-        usage=$(grep "^maxmem" $stat | cut -d " " -f 2)
+        export config
+        export solver=$(echo $config | cut -d. -f 1 )
+        export time=$(echo $config | cut -d. -f 2 )
+        export mem=$(echo $config | cut -d. -f 3 )
+        export log=$probname.$config.log
+        export err=$probname.$config.err
+        export stat=$probname.$config.stat
+        export length=$(min $(map countline $(ls $probname.$config.plan* 2>/dev/null )))
+        export elapsed=$(grep "^real" $stat | cut -d " " -f 2)
+        export usage=$(grep "^maxmem" $stat | cut -d " " -f 2)
         if $pred
         then
             $@
