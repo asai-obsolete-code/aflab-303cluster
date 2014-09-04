@@ -91,7 +91,7 @@ export -f echorun
 export -f wrap
 
 main (){
-    filter=$1
+    pred=$1
     shift
     time mapdir mapprob mapconf $@ | sed -e 's/()//g'
 }
@@ -134,7 +134,13 @@ mapconf (){
         solver=$(echo $config | cut -d- -f 1 )
         time=$(echo $config | cut -d- -f 2 )
         mem=$(echo $config | cut -d- -f 3 )
-        if [[ $config =~ $filter ]]
+        log=$probname.$config.log
+        err=$probname.$config.err
+        stat=$probname.$config.stat
+        length=$(min $(map countline $(ls $probname.$config.plan*)))
+        time=$(grep "^real" $stat | cut -d " " -f 2)
+        mem=$(grep "^maxmem" $stat | cut -d " " -f 2)
+        if $pred
         then
             $@
         fi
