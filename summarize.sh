@@ -140,4 +140,10 @@ mapconf (){
     done
 }
 
+safe-echo (){
+    for arg in $@
+    do
+        eval "echo -n \"\${$arg:=-1} \""
+    done
+}
 

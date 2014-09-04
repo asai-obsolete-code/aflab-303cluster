@@ -43,7 +43,8 @@ source summarize.sh
 
 parproblem (){
     cost=$(grep "Best solution cost so far" $log | tail -n 1 | sed -e 's/Best solution cost so far: \([0-9.]*\)$/\1/g')
-    echo "($domname $probname $solver $time $mem ${cost:=-1} ${length:=-1} ${elapsed:=-1} ${usage:=-1})"
+    wrap echo -n $(safe-echo domname probname solver time mem cost length elapsed usage)
+    echo
 }
 
 # example:
