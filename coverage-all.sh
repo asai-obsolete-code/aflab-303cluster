@@ -1,3 +1,3 @@
 #!/bin/bash
 
-cat *.summary | ./coverage.lisp
+cat *.summary | $(dirname $(readlink -ef $0))/coverage.lisp
