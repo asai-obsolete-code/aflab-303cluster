@@ -1,3 +1,3 @@
 #!/bin/bash
 
-qsub -v PWD=$PWD $@
+qsub -d $PWD $@
