@@ -14,11 +14,11 @@ fn (){
 }
 
 targets (){
-    ls -d */ | grep -v planner-scripts
+    ls -1 -d */ | grep -v planner-scripts
 }
 
 echo $(fn)
 
 tar czf $(fn).tar.gz $(targets)
 
-mv -vf *.tar.gz ../results/
+mv -vb *.tar.gz ../results/
