@@ -42,6 +42,7 @@
 /watch.sh
 /summarize-example.sh
 /summarize.sh
+validate-all.sh
 /lama.summary-success
 /lama.summary-success-1800
 /gitignore
