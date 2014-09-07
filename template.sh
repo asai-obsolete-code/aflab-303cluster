@@ -10,6 +10,7 @@ copy(){
         planname=\$(basename \$plan)
         cp \$plan $(dirname $problem)/$outname.\${planname##*$probname.}
     done
+    rm -r \$tmp
 }
 
 trap "copy" EXIT
@@ -20,3 +21,5 @@ cp $(dirname $problem)/domain.pddl \$tmp/
 pushd \$tmp
 $binary $options $probname.pddl domain.pddl
 popd
+
+
