@@ -34,12 +34,12 @@ validate (){
             echo "$domname $plan"
             i=0
         fi
+        if [[ $i -gt $max ]]
+        then
+            echo
+            i=0
+        fi
     done
-    if [[ $i -gt $max ]]
-    then
-        echo
-        i=0
-    fi
 }
 
 
