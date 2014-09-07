@@ -22,7 +22,7 @@ do
     echo "logging in to fun$node..."
     if $PARALLEL
     then
-        ssh fun$node "cd $PWD; $commands > $(hostname).log" &
+        ssh fun$node "cd $PWD; $commands" &
     else
         ssh -t fun$node "cd $PWD; $commands"
     fi
