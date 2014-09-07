@@ -9,7 +9,8 @@ EOF
 fi
 
 binary=$(readlink -ef $1)
-options=$2
+shift
+options="$*"
 
 # writes a qsub script to the standard output
 # the script 1. cd to the temp directory
