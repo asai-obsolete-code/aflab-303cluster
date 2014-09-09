@@ -18,13 +18,14 @@ pid=
 
 sleep=10
 mykill (){
-    echodo kill -s SIGXCPU $1
-    sleep $sleep
     ps $1 &> /dev/null && {
-        echodo kill -s SIGTERM $1
-        sleep $sleep
+        pstree -p -H $1 $1
+        vechodo $dir/killall.sh $1 SIGXCPU
+        vechodo $dir/killall.sh $1 SIGTERM
+        vechodo sleep $sleep
+        vecho sleep end
         ps $1 &> /dev/null && {
-            echodo kill -s SIGKILL $1
+            vechodo $dir/killall.sh $1 -9
         }
     }
 }
