@@ -12,6 +12,7 @@ mkdir -p $cgmem
 
 pushd $cgmem &> /dev/null
 echo 0 > memory.swappiness
+echo 1 > memory.use_hierarchy
 popd &> /dev/null
 
 pid=
