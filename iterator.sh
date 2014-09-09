@@ -2,7 +2,7 @@
 
 . $dir/utilities.sh
 
-pcgname=$cgname
+pcgname=${cgname:-$(whoami)}
 cgname=$pcgname/$$            # child cgname
 cg=/sys/fs/cgroup
 cgcpu=$cg/cpuacct/$cgname
