@@ -2,10 +2,11 @@
 
 . $dir/utilities.sh
 
-ccgname=$cgname/$$            # child cgname
+pcgname=$cgname
+cgname=$pcgname/$$            # child cgname
 cg=/sys/fs/cgroup
-cgcpu=$cg/cpuacct/$ccgname
-cgmem=$cg/memory/$ccgname
+cgcpu=$cg/cpuacct/$cgname
+cgmem=$cg/memory/$cgname
 mkdir -p $cgcpu
 mkdir -p $cgmem
 
@@ -36,6 +37,7 @@ twice-time (){
         then
             echo "Failed, no more iteration!" >&2
         else
+            cgname=$pcgname     # restore the parent cgname
             next                    # throw the next job
         fi
     )
@@ -49,6 +51,7 @@ twice-mem (){
         then
             echo "Failed, no more iteration!" >&2
         else
+            cgname=$pcgname     # restore the parent cgname
             next                    # throw the next job
         fi
     )
@@ -74,7 +77,7 @@ do
 done
 
 export time mem maxtime maxmem maxcpu cgname cgcpu
-cgexec -g cpuacct,memory:$ccgname $command &
+cgexec -g cpuacct,memory:$cgname $command &
 pid=$!
 
 cpuusage=$(($(< $cgcpu/cpuacct.usage) / 1000000))
