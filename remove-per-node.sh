@@ -1,22 +1,19 @@
 #!/bin/bash
 
+old=/tmp/oldtmp
+
 echorun (){
     echo $*
     $@
 }
 
-task (){
-    find /tmp/ -name $1 | xargs -P 7 -n 20 rm -rf
-}
-
 main (){
-    task '*.lisptmp.*'
-    task 'fastdownward.*'
-    task 'component-planner.*'
-    task 'macroff.*'
-    task 'fd-benchmark.*'
-    task 'doubling.*'
+    echo hi!
+    nohup ./mvrm /tmp/lisptmp
+    nohup ./mvrm /tmp/newtmp
+    list=$(ls /tmp/doubling*)
+    rm -rv $list
 }
 
-time main
+main
 echo finished!

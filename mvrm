@@ -1,0 +1,5 @@
+#!/bin/bash
+
+tmp=$(mktemp -d)
+mv -v $1 $tmp/
+rm -r $tmp
