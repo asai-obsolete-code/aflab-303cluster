@@ -10,10 +10,10 @@ cgmem=$cg/memory/$cgname
 mkdir -p $cgcpu
 mkdir -p $cgmem
 
-pushd $cgmem &> /dev/null
-echo 0 > memory.swappiness
-echo 1 > memory.use_hierarchy
-popd &> /dev/null
+echo 0 > $cgmem/memory.swappiness
+echo 1 > $cgmem/memory.use_hierarchy
+echo $(($mem * 1024)) > $cgmem/memory.limit_in_bytes
+echo $(($mem * 1024)) > $cgmem/memory.memsw.limit_in_bytes
 
 pid=
 

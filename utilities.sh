@@ -44,9 +44,9 @@ next(){
     cd $dir
     ppn=$(($mem / ( $maxmem / $maxcpu )))
     if [[ $ppn == 0 ]] ; then ppn=1; fi
-    # add 200MB and 300sec room
+    # add 200MB and 30sec room
     echodo qsub -l mem=$((200000 + $mem )),pmem=$((200000 + $mem )) \
-        -l walltime=$(( 300 + $time )) \
+        -l walltime=$(( 30 + $time )) \
         -l nodes=1:ppn=$ppn \
         $(kvs $exportargs) \
         $(eval "echo $(< $optfile)") iterator.sh
