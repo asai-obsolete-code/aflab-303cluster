@@ -25,6 +25,8 @@
                         (pushnew domain domains)
                         (pushnew solver solvers)))))
       (end-of-file (c)
+        (setf solvers (sort solvers #'string<))
+        (setf domains (sort domains #'string<))
         (format t "~&| ~30a|~{ ~12a|~}" 'domains solvers)
         (iter (for domain in domains)
               (format t "~&| ~30a|" domain)
