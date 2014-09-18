@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # quoted $ signs are evaluated runtime
-
+echo "$(whoami)@$(hostname)"
 tmp=\$(mktemp --tmpdir -d doubling.XXXXXXX)
 
 copy(){

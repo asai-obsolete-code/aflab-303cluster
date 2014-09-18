@@ -45,3 +45,5 @@ validate (){
 
 
 mapdir mapprob mapconf validate
+
+grep -r "debugger" .

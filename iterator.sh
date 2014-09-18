@@ -17,7 +17,7 @@ echo $(($mem * 1024)) > $cgmem/memory.memsw.limit_in_bytes
 
 pid=
 
-sleep=10
+sleep=3
 mykill (){
     ps $1 &> /dev/null && {
         pstree -p -H $1 $1
@@ -75,7 +75,7 @@ do
     then
         break                   # wait for the nfs synchronization
     fi
-    sleep 3
+    sleep 1
 done
 
 export time mem maxtime maxmem maxcpu cgname cgcpu
