@@ -1,3 +1,3 @@
 #!/bin/bash
 
-watch -d "( qstat -q ; ( qstat -a | grep R | head -n 50 ) ; ( pbsnodes | grep '^fun\|jobs =' ) )"
+watch -d -t "( ( qstat -q | tail -n 5 | head -n 3 | grep -v '\-\{3\}' ) ; ( qstat -a | grep batch | grep R | head -n 48 ) ; ( pbsnodes | grep '^fun\|jobs =' ) )"
