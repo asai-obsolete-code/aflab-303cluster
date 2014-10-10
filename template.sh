@@ -16,10 +16,10 @@ copy(){
 trap "copy" EXIT
 
 cp $problem \$tmp/
-cp $(dirname $problem)/domain.pddl \$tmp/
+cp $domain \$tmp/
 
 pushd \$tmp
-$binary $options $probname.pddl domain.pddl
+$binary $options $probname.pddl $domname.pddl
 popd
 
 

@@ -34,6 +34,15 @@ then
     probname=$(basename $problem)
 fi
 
+if [[ -e $(dirname $problem)/domain.pddl ]]
+then
+    domname=domain
+else
+    domname=$probname-domain
+fi
+
+domain=$(dirname $problem)/$domname.pddl
+
 eval "cat <<EOF
 $(< template.sh)
 EOF"
