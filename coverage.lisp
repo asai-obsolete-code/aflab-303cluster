@@ -13,6 +13,10 @@
 ;; (barman p01 nf-fffd 3600 2000000 597 158815 233252 387 27.798)
 ;; (dom    prob solver maxt maxm   cost time   mem macrocost preprocess)
 
+(defun cut (str max)
+  (if (<= max (length str))
+      (subseq str 0 max)
+      str))
 
 (defun myprint (threshold)
   (print threshold)
@@ -27,15 +31,16 @@
       (end-of-file (c)
         (setf solvers (sort solvers #'string<))
         (setf domains (sort domains #'string<))
-        (format t "~&| ~30a|~{ ~12a|~}" 'domains solvers)
+        (setf *print-case* :downcase)
+        (format t "~&| ~15a|~{ ~8a|~}" "domains" solvers)
         (iter (for domain in domains)
-              (format t "~&| ~30a|" domain)
+              (format t "~&| ~15a|" (cut (princ-to-string domain) 15))
               (iter (with coverages =
                           (mapcar (lambda (solver)
                                     (getf (getf plist solver) domain 0))
                                   solvers))
                     (for coverage in coverages)
-                    (format t " ~12@<~:[~a~;*~a*~]~>|"
+                    (format t " ~8@<~:[~a~;*~a*~]~>|"
                             (= coverage (reduce #'max coverages))
                             coverage)))))))
 
