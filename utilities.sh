@@ -45,7 +45,7 @@ next(){
     ppn=$(($mem / ( $maxmem / $maxcpu )))
     if [[ $ppn == 0 ]] ; then ppn=1; fi
     # add 200MB and 30sec room
-    echodo qsub -p 1 -l mem=$((200000 + $mem )),pmem=$((200000 + $mem )) \
+    echodo qsub -l mem=$((200000 + $mem )),pmem=$((200000 + $mem )) \
         -l walltime=$(( 30 + $time )) \
         -l nodes=1:ppn=$ppn \
         $(kvs $exportargs) \
