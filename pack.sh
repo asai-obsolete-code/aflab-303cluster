@@ -17,8 +17,9 @@ targets (){
     ls -1 -d */ | grep -v planner-scripts
 }
 
-echo $(fn)
+name=${1:-$(fn)}
+echo $name
 
-tar czf $(fn).tar.gz $(targets)
+tar czf $name.tar.gz $(targets)
 
 mv -vb *.tar.gz ../results/

@@ -1,5 +1,5 @@
 #!/bin/bash
-start
+# start
 cat *.summary | $(dirname $(readlink -ef $0))/coverage.lisp 3600 2> /dev/null
 cat *.summary | $(dirname $(readlink -ef $0))/coverage.lisp 1800 2> /dev/null
 cat *.summary | $(dirname $(readlink -ef $0))/coverage.lisp 900 2> /dev/null
