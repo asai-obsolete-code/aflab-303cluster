@@ -24,9 +24,16 @@ validate (){
     # usage -- memory usage
     # length -- min plan length
 
+    if [[ -e domain.pddl ]]
+    then
+        domain=domain.pddl
+    else
+        domain=$probname-domain.pddl
+    fi
+
     for plan in $probname.$config.plan*
     do
-        if $val domain.pddl $problem  &> /dev/null
+        if $val $domain $problem $plan &> /dev/null
         then
             echo -n .
             i=$(( $i + 1 ))
