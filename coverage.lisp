@@ -43,6 +43,8 @@
     (woodworking-sat11-nocost 'woodworking-l)
     (pipesworld-notankage 'pipesworld-nt)
     (pipesworld-tankage 'pipesworld)
+    (tpp 'tpp-l)
+    (miconic 'miconic-l)
     (t domain)))
 
 (defvar *nonipc-domains*
@@ -55,10 +57,17 @@
       openstacks-nocost
       rovers
       satellite-typed2
-      woodworking-sat11-nocost))
+      woodworking-sat11-nocost
+      tpp
+      miconic))
 
 (defun ipc-p (domain)
   (not (member domain *nonipc-domains*)))
+
+(defun segfault-p (domain solver coverage)
+  (and (member solver '(mv mv2))
+       (member domain '(gripper miconic driverlog zenotravel mystery))
+       (= coverage 0)))
 
 (defun rename-solver (solver)
   (case solver
@@ -103,8 +112,7 @@
           (make-list n :initial-element "         |")))
 
 (defun myprint (threshold)
-  (format t "~&#+ATTR_LATEX: :float multicolumn :align l|cccc|cccc|ccc|cc|cc|c
-#+CAPTION: ~a sec results." threshold)
+  (format t "~&#+ATTR_LATEX: :align |l|cc|cc|c|cc|cc|c|" threshold)
   (let (plist solvers domains)
     (handler-case
         (iter (match (read *standard-input*)
@@ -119,11 +127,12 @@
         (setf solvers (sort solvers #'string<))
         (setf domains (sort domains #'string<))
         (setf *print-case* :downcase)
+        (hline (length solvers))
         (format t "~&| ~20a|~{ ~8a|~}"
-                ""
+                (format nil "~a[sec]" threshold)
                 (mapcar #'rename-solver solvers))
         ;; (hline (length solvers))
-        (header "Large instances" (length solvers))
+        (header "EX-Large instances" (length solvers))
         (hline (length solvers))
         (labels ((print-domains (domains)
                    (iter (for domain in domains)
@@ -137,13 +146,17 @@
                                (mapcar (lambda (solver)
                                          (getf (getf plist solver) domain 0))
                                        solvers))
+                         (for solver in solvers)
                          (for coverage in coverages)
-                         (format t " ~8@<~:[~a~;*~a*~]~>|"
-                                 (= coverage (reduce #'max coverages))
-                                 coverage))))
+                         (cond
+                           ((segfault-p domain solver coverage)
+                            (format t " ~8@<-~>|"))
+                           ((= coverage (reduce #'max coverages))
+                            (format t " ~8@<*~a*~>|" coverage))
+                           (t (format t " ~8@<~a~>|" coverage))))))
           (print-domains (remove-if #'ipc-p domains))
           (header "" (length solvers))
-          (header "IPC instances(+types)" (length solvers))
+          (header "IPC instances" (length solvers))
           (hline (length solvers))
           (print-domains (remove-if-not #'ipc-p domains))
           (hline (length solvers)))))))
