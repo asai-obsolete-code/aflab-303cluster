@@ -100,7 +100,9 @@
 (defvar *solver-blacklist* '(cea cea2 cea2ncp cea2ncy
                              ff2ncp ff2ncy
                              fd2ncp fd2ncy
-                             fffdncp fffdncy))
+                             fffdncp fffdncy
+                             mv mv2
+                             solep))
 (defvar *domain-blacklist* '(sokoban-sat11-strips transport-sat11-strips))
 
 (defun hline (n)
