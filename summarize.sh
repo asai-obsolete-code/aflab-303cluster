@@ -147,3 +147,73 @@ safe-echo (){
     done
 }
 
+################################################################
+#### per-planner
+
+# list of useful variables:
+# dirname
+# domname
+# problem
+# pnum
+# probname
+# config
+# solver
+# time
+# mem
+# log
+# err
+# stat
+# elapsed -- elapsed time
+# usage -- memory usage
+# length -- min plan length
+
+# p01.lmcut-1800-2000000.log : $log
+# p01.lmcut-1800-2000000.err : $err
+# p01.lmcut-1800-2000000.stat : $stat
+#     ^solver
+#           ^time
+#                ^mem
+#     ^^^^^^^^^^^^^^^^^^config
+# problem: p01.pddl
+# probname: p01
+# pnum: 01
+
+# list of functions:
+
+# echorun : echo and do
+# wrap : wrap with ()
+# main : map over directories,problems and configurations
+
+parproblem-std (){
+    wrap echo -n $(safe-echo domname probname solver time mem length elapsed usage)
+    echo
+}
+
+
+parproblem-fd (){
+    macrocost=$(grep "Plan cost:" $log | tail -n 1 | cut -d " " -f 3)
+    preprocess=$(grep "[0-9.]* seconds of real time" $log | sed -e "s/^ *//g" | cut -d " " -f 1)
+    wrap echo -n $(safe-echo domname probname solver time mem length elapsed usage macrocost preprocess)
+    echo
+}
+
+parproblem-ff (){
+    macrocost=$(grep "Plan cost:" $log | tail -n 1 | cut -d " " -f 4)
+    preprocess=$(grep "[0-9.]* seconds of real time" $log | sed -e "s/^ *//g" | cut -d " " -f 1)
+    wrap echo -n $(safe-echo domname probname solver time mem length elapsed usage macrocost preprocess)
+    echo
+}
+
+parproblem-mv (){
+    macrocost=$(grep "MakeSpan" $log | cut -d " " -f 3)
+    preprocess=$(grep "[0-9.]* seconds of real time" $log | sed -e "s/^ *//g" | cut -d " " -f 1)
+    wrap echo -n $(safe-echo domname probname solver time mem length elapsed usage macrocost preprocess)
+    echo
+}
+
+parproblem-lmcut (){
+    log=$probname.$config.log
+    err=$probname.$config.err
+    lbound=$(grep "f = " $log | tail -n 1 | sed -e 's/f = \([0-9.]*\) \[.*$/\1/g')
+    echo -n "$probname ${lbound:=-1}"
+}
