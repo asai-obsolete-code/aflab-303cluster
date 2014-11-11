@@ -183,9 +183,9 @@
       (end-of-file (c)
         (setf *print-case* :downcase)
         (let ((solvers (associative-array-dimension db 2)))
+          (format t "domain domnum problem ~{~a~^ ~}~&" solvers)
           (iter (for domain in (associative-array-dimension db 0))
                 ;; (format t "~2&## ~a~&" domain)
-                ;; (format t "problem ~{~a~^ ~}~&" solvers)
                 (iter (for prob in (sort (associative-array-dimension db 1) #'string<))
                       (for costs =
                            (iter (for solver in solvers)
@@ -195,7 +195,12 @@
                                        ((list* cost _) cost)
                                        (_ -1)))))
                       (when (every #'plusp costs)
-                        (format t "~a-~a ~{~a~^ ~}~&" domain prob costs)))))))))
+                        (format t "~a ~a ~a ~{~a~^ ~}~&"
+                                domain
+                                (position domain
+                                          (associative-array-dimension db 0))
+                                prob costs)))))))))
+
 
 (myprint (parse-integer (second sb-ext:*posix-argv*)))
 

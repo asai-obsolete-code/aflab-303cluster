@@ -1,11 +1,12 @@
 #! /usr/bin/gnuplot
 
-set terminal png
+set terminal pdf
 
-set output "costs.png"
+set output "costs.pdf"
+# set xtics
+# plot for [j=2:8] "data" using 0:j:xticlabels(1) w l
 
-plot "data" using 2 w l, \
-     "data" using 3 w l, \
-     "data" using 4 w l
+set key autotitle columnhead
+plot for [j=4:10] "data" using 0:j w l lw 2
 
 set output
