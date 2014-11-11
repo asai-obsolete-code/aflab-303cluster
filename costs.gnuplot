@@ -1,3 +1,4 @@
+#! gnuplot
 
 set terminal png
 
