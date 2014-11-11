@@ -5,7 +5,9 @@
              "quicklisp/setup"
              (user-homedir-pathname)))
 
-(let ((*standard-output* *error-output*))
+(with-open-file (*standard-output* "/dev/null"
+                                   :direction :output
+                                   :if-exists :overwrite)
   (ql:quickload :iterate) (use-package :iterate)
   (ql:quickload :optima)  (use-package :optima)
   (ql:quickload :osicat) ; (use-package :osicat)
@@ -168,18 +170,32 @@
 ;; (barman p01 nf-fffd 3600 2000000 597 158815 233252 387 27.798)
 ;; (dom    prob solver maxt maxm   cost time   mem macrocost preprocess)
 (defun myprint (threshold)
-  (let ((db (associative-array 5)))
+  (let ((db (associative-array 3)))
     (handler-case
         (iter (match (read *standard-input*)
-                ((list* domain prob solver maxt maxm data)
+                ((list* domain prob solver _ _
+                        (and data
+                             (list* _ time _)))
                  (when (and (< time (* 1000 threshold)) ;; msec->sec
                             (not (member solver *solver-blacklist*))
                             (not (member domain *domain-blacklist*)))
-                   (setf (aaref db domain prob solver maxt maxm) data)))))
+                   (setf (aaref db domain prob solver) data)))))
       (end-of-file (c)
         (setf *print-case* :downcase)
-
-        (print a)))))
+        (let ((solvers (associative-array-dimension db 2)))
+          (iter (for domain in (associative-array-dimension db 0))
+                ;; (format t "~2&## ~a~&" domain)
+                ;; (format t "problem ~{~a~^ ~}~&" solvers)
+                (iter (for prob in (sort (associative-array-dimension db 1) #'string<))
+                      (for costs =
+                           (iter (for solver in solvers)
+                                 (for data = (aaref db domain prob solver))
+                                 (collect
+                                     (match data
+                                       ((list* cost _) cost)
+                                       (_ -1)))))
+                      (when (every #'plusp costs)
+                        (format t "~a-~a ~{~a~^ ~}~&" domain prob costs)))))))))
 
 (myprint (parse-integer (second sb-ext:*posix-argv*)))
 
