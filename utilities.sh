@@ -48,6 +48,7 @@ next(){
     echodo qsub -l mem=$((200000 + $mem )),pmem=$((200000 + $mem )) \
         -l walltime=$(( 30 + $time )) \
         -l nodes=1:ppn=$ppn \
+        -p 2 \
         $(kvs $exportargs) \
         $(eval "echo $(< $optfile)") iterator.sh
 }
