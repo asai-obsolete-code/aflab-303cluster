@@ -235,7 +235,6 @@ getcost (){
 
 actioncost (){
     cost=$(min $(map getcost $(ls $probname.$config.plan* 2>/dev/null )))
-    echo $cost >&2
     # macrocost=$(grep "Plan cost:" $log | tail -n 1 | cut -d " " -f 3)
     preprocess=$(grep "[0-9.]* seconds of real time" $log | sed -e "s/^ *//g" | cut -d " " -f 1)
     wrap echo -n $(safe-echo domname probname solver time mem length elapsed usage preprocess cost)
