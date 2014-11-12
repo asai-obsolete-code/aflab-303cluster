@@ -230,7 +230,7 @@ getcost (){
     else
         domain=$probname-domain.pddl
     fi
-    $val -S $domain $problem $plan
+    $val -S $domain $problem $1
 }
 
 actioncost (){
