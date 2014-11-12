@@ -2,9 +2,12 @@
 
 set terminal pdf
 
-set output "$1"
+set output
+set xlabel "cost x"
+set ylabel "cost CAP(x+x)"
+set logscale xy
 
 set key autotitle columnhead
-plot "<&1" using 4:5 w p
+plot x, "<&3" using 4:5 w p
 
-set output
+
