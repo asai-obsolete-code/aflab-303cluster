@@ -217,3 +217,27 @@ parproblem-lmcut (){
     lbound=$(grep "f = " $log | tail -n 1 | sed -e 's/f = \([0-9.]*\) \[.*$/\1/g')
     echo -n "$probname ${lbound:=-1}"
 }
+
+
+#### :action-cost domains
+
+val=~/repos/downward/src/validate
+
+actioncost (){
+    if [[ -e domain.pddl ]]
+    then
+        domain=domain.pddl
+    else
+        domain=$probname-domain.pddl
+    fi
+    $val -S $domain $problem $plan
+}
+
+actioncost-fd (){
+    cost=$(min $(map actioncost $(ls $probname.$config.plan* 2>/dev/null )))
+    # macrocost=$(grep "Plan cost:" $log | tail -n 1 | cut -d " " -f 3)
+    preprocess=$(grep "[0-9.]* seconds of real time" $log | sed -e "s/^ *//g" | cut -d " " -f 1)
+    wrap echo -n $(safe-echo domname probname solver time mem length elapsed usage 0 preprocess cost)
+    echo
+}
+
