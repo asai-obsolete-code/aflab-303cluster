@@ -99,12 +99,13 @@
     (solep '\\solep)
     (t solver)))
 
-(defvar *solver-blacklist* '(cea cea2 cea2ncp cea2ncy
-                             ff2ncp ff2ncy
-                             fd2ncp fd2ncy
-                             fffdncp fffdncy
-                             mv mv2
-                             solep))
+(defvar *solver-blacklist* '(;; cea cea2 cea2ncp cea2ncy
+                             ;; ff2ncp ff2ncy
+                             ;; fd2ncp fd2ncy
+                             ;; fffdncp fffdncy
+                             ;; mv mv2
+                             ;; solep
+                             ))
 (defvar *domain-blacklist* '(sokoban-sat11-strips transport-sat11-strips))
 
 ;;; assoc-array
@@ -198,22 +199,53 @@
                    (format t "~&set ~a ~a"
                            key (gp-quote val))))))
 
-(defun plot (fn &rest args
+
+(defvar *data-functions*)
+(defmacro with-plots (&body body)
+  `(let (*data-functions*)
+     (format t "~&plot")
+     ,@body
+     (dolist (fn (nreverse *data-functions*))
+       (funcall fn))))
+
+(defun plot (data-producing-fn &rest args
              &key &allow-other-keys)
   (let ((*print-case* :downcase))
-    (format t "~&plot '-'")
+    (format t "~@[,~] '-'" *data-functions*)
     (gp-map-args
      args
      (lambda (&rest args)
        (match args
          ((list :using (and val (type list)))
           (format t " using ~{~a~^:~}" val))
+         ((list :continue _)
+          ) ; do nothing
          ((list key val)
           (format t " ~a ~a"
                   key (gp-quote val))))))
-    (funcall fn)
-    (format t "~&end")))
+    (push
+     (lambda ()
+       (funcall data-producing-fn)
+       (format t "~&end"))
+     *data-functions*)))
 
+(defun nop ())
+(defun func-plot (string &rest args
+                  &key &allow-other-keys)
+  (let ((*print-case* :downcase))
+    (format t "~@[,~] ~a" *data-functions* string)
+    (gp-map-args
+     args
+     (lambda (&rest args)
+       (match args
+         ((list :using (and val (type list)))
+          (format t " using ~{~a~^:~}" val))
+         ((list :continue _)
+          ) ; do nothing
+         ((list key val)
+          (format t " ~a ~a"
+                  key (gp-quote val))))))
+    (push #'nop *data-functions*)))
 ;;; main
 
 
@@ -232,14 +264,17 @@
                    (setf (aaref db domain prob solver) data)))))
       (end-of-file (c)
         (let ((solvers (associative-array-dimension db 2)))
-          (gp-setup :xlabel (format t "cost ~a" (first solvers))
-                    :ylabel (format t "cost ~a" (second solvers))
-                    :output (format t "~a-~a.pdf"
+          (gp-setup :xlabel (format nil "cost ~a" (first solvers))
+                    :ylabel (format nil "cost ~a" (second solvers))
+                    :output (format nil "~a-~a.pdf"
                                     (first solvers)
-                                    (second solvers)))
-          (iter (for domain in (associative-array-dimension db 0))
-                (plot
-                 (lambda ()
+                                    (second solvers))
+                    :key '(:bottom :right :font "Times New Roman, 6")
+                    :pointsize "0.4px")
+          (with-plots
+            (func-plot "x")
+            (mapc (lambda (domain)
+                    (plot (lambda ()
                    ;; compute max range
                    (let ((max/domain
                           (iter (for prob in (sort (associative-array-dimension db 1)
@@ -256,12 +291,16 @@
                                 (iter (for solver in solvers)
                                       (for data = (aaref db domain prob solver))
                                       (collect
+                                                   (float
                                           (/ (match data
                                                ((list _ _ _ _ cost) cost)
                                                (_ -1))
-                                             max/domain))))
+                                                       max/domain)))))
                            (when (every #'plusp costs)
-                             (format t "~{~a~^ ~}~&" costs))))))))))))
+                                      (format t "~&~{~a~^ ~}" costs)))))
+                          :using '(1 2)
+                          :title (princ-to-string domain)))
+                  (associative-array-dimension db 0))))))))
 
 
 (myprint (parse-integer (second sb-ext:*posix-argv*)))
