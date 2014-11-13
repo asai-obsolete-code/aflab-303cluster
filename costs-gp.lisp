@@ -249,16 +249,18 @@
 ;;; main
 
 
-;; (barman p01 nf-fffd 3600 2000000 597 158815 233252 387 27.798)
-;; (dom    prob solver maxt maxm   cost time   mem macrocost preprocess)
+;; (domname probname solver time mem 
+;; elapsed preprocess usage
+;; cost length macrousage metalength
+;; forwardmacro cyclicmacro numeval numcomp)
+
 (defun myprint (threshold)
   (let ((db (associative-array 3)))
     (handler-case
         (iter (match (read *standard-input*)
                 ((list* domain prob solver _ _
-                        (and data
-                             (list* _ time _)))
-                 (when (and (< time (* 1000 threshold)) ;; msec->sec
+                        (and data (list* elapsed _)))
+                 (when (and (< elapsed (* 1000 threshold)) ;; msec->sec
                             (not (member solver *solver-blacklist*))
                             (not (member domain *domain-blacklist*)))
                    (setf (aaref db domain prob solver) data)))))
@@ -283,7 +285,8 @@
                                  (iter (for solver in solvers)
                                        (maximizing
                                         (match (aaref db domain prob solver)
-                                          ((list _ _ _ _ cost) cost)
+                                          ((list* _ _ _ cost _)
+                                           cost)
                                           (_ -1))))))))
                      (iter (for prob in (sort (associative-array-dimension db 1)
                                               #'string<))
@@ -291,11 +294,12 @@
                                 (iter (for solver in solvers)
                                       (for data = (aaref db domain prob solver))
                                       (collect
-                                                   (float
+                                       (float
                                           (/ (match data
-                                               ((list _ _ _ _ cost) cost)
+                                               ((list* _ _ _ cost _)
+                                                cost)
                                                (_ -1))
-                                                       max/domain)))))
+                                             max/domain)))))
                            (when (every #'plusp costs)
                                       (format t "~&~{~a~^ ~}" costs)))))
                           :using '(1 2)
