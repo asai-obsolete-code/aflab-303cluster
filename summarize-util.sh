@@ -184,39 +184,33 @@ safe-echo (){
 # wrap : wrap with ()
 # main : map over directories,problems and configurations
 
-parproblem-std (){
-    wrap echo -n $(safe-echo domname probname solver time mem length elapsed usage)
-    echo
-}
+# parproblem-fd (){
+#     macrocost=$(grep "Plan cost:" $log | tail -n 1 | cut -d " " -f 3)
+#     preprocess=$(grep "[0-9.]* seconds of real time" $log | sed -e "s/^ *//g" | cut -d " " -f 1)
+#     wrap echo -n $(safe-echo domname probname solver time mem length elapsed usage macrocost preprocess)
+#     echo
+# }
 
+# parproblem-ff (){
+#     macrocost=$(grep "Plan cost:" $log | tail -n 1 | cut -d " " -f 4)
+#     preprocess=$(grep "[0-9.]* seconds of real time" $log | sed -e "s/^ *//g" | cut -d " " -f 1)
+#     wrap echo -n $(safe-echo domname probname solver time mem length elapsed usage macrocost preprocess)
+#     echo
+# }
 
-parproblem-fd (){
-    macrocost=$(grep "Plan cost:" $log | tail -n 1 | cut -d " " -f 3)
-    preprocess=$(grep "[0-9.]* seconds of real time" $log | sed -e "s/^ *//g" | cut -d " " -f 1)
-    wrap echo -n $(safe-echo domname probname solver time mem length elapsed usage macrocost preprocess)
-    echo
-}
+# parproblem-mv (){
+#     macrocost=$(grep "MakeSpan" $log | cut -d " " -f 3)
+#     preprocess=$(grep "[0-9.]* seconds of real time" $log | sed -e "s/^ *//g" | cut -d " " -f 1)
+#     wrap echo -n $(safe-echo domname probname solver time mem length elapsed usage macrocost preprocess)
+#     echo
+# }
 
-parproblem-ff (){
-    macrocost=$(grep "Plan cost:" $log | tail -n 1 | cut -d " " -f 4)
-    preprocess=$(grep "[0-9.]* seconds of real time" $log | sed -e "s/^ *//g" | cut -d " " -f 1)
-    wrap echo -n $(safe-echo domname probname solver time mem length elapsed usage macrocost preprocess)
-    echo
-}
-
-parproblem-mv (){
-    macrocost=$(grep "MakeSpan" $log | cut -d " " -f 3)
-    preprocess=$(grep "[0-9.]* seconds of real time" $log | sed -e "s/^ *//g" | cut -d " " -f 1)
-    wrap echo -n $(safe-echo domname probname solver time mem length elapsed usage macrocost preprocess)
-    echo
-}
-
-parproblem-lmcut (){
-    log=$probname.$config.log
-    err=$probname.$config.err
-    lbound=$(grep "f = " $log | tail -n 1 | sed -e 's/f = \([0-9.]*\) \[.*$/\1/g')
-    echo -n "$probname ${lbound:=-1}"
-}
+# parproblem-lmcut (){
+#     log=$probname.$config.log
+#     err=$probname.$config.err
+#     lbound=$(grep "f = " $log | tail -n 1 | sed -e 's/f = \([0-9.]*\) \[.*$/\1/g')
+#     echo -n "$probname ${lbound:=-1}"
+# }
 
 
 #### :action-cost domains
@@ -230,14 +224,46 @@ getcost (){
     else
         domain=$probname-domain.pddl
     fi
-    $val -S $domain $problem $1
+    if [[ -e $1 ]]
+    then
+        # echo "$val -S $domain $problem $1" >&2
+        echo $($val -S $domain $problem $1 | sed -e "s/[^0-9 ]//g")
+    fi
 }
 
 actioncost (){
     cost=$(min $(map getcost $(ls $probname.$config.plan* 2>/dev/null )))
-    # macrocost=$(grep "Plan cost:" $log | tail -n 1 | cut -d " " -f 3)
-    preprocess=$(grep "[0-9.]* seconds of real time" $log | sed -e "s/^ *//g" | cut -d " " -f 1)
-    wrap echo -n $(safe-echo domname probname solver time mem length elapsed usage preprocess cost)
+    macrousage=$(grep "Decoding action" $log | wc -l )
+    metalength=$(($length - $macrousage))
+    
+    forwardmacro=$(grep "macros after filtering" $log | cut -d ' ' -f 1)
+    cyclicmacro=$(grep "(CYCLE" $log | wc -l)
+
+    numeval=$(grep "Number of component plan evaluation:" $log | cut -d ' ' -f 6)
+    numcomp=$(grep "Number of comparison:" $log | cut -d ' ' -f 4)
+    
+    preprocess=$(grep "[0-9.]* seconds of real time" $log | cut -d ' ' -f 3)
+
+    # basic info
+    # memory infomation
+    # plan infomation
+    # CAP infomation
+
+    wrap echo -n \
+        $(safe-echo domname probname solver time mem elapsed preprocess usage cost length macrousage metalength forwardmacro cyclicmacro numeval numcomp)
     echo
 }
 
+parproblem-std (){
+    cost=$(min $(map getcost $(ls $probname.$config.plan* 2>/dev/null )))
+    macrousage=0
+    metalength=$length
+    forwardmacro=0
+    cyclicmacro=0
+    numeval=0
+    numcomp=0
+    preprocess=0
+    wrap echo -n \
+        $(safe-echo domname probname solver time mem elapsed preprocess usage cost length macrousage metalength forwardmacro cyclicmacro numeval numcomp)
+    echo
+}
