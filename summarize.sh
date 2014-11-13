@@ -2,7 +2,7 @@
 
 . summarize-util.sh
 
-sd=$(dirname $(readlink -ef $0))
+sd=$(pwd)
 
 run (){
     main $(lambda -- "[[ \$length != '' ]]") dispatch
