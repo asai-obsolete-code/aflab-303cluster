@@ -1,14 +1,9 @@
 #!/bin/bash
 
-
 plot (){
-    cat $1.summary $2.summary | ./costs-gp.lisp 1800 | gnuplot
+    echo $*
+    cat $1.summary $2.summary | ./costs.lisp 1800
 }
-
-
-
-
-
 
 
 plot fd fd2
@@ -17,4 +12,5 @@ plot fd fffd
 
 plot cea cea2
 plot probe probe2
+plot mv mv2
 

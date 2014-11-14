@@ -5,6 +5,12 @@
              "quicklisp/setup"
              (user-homedir-pathname)))
 
+(eval (read-from-string
+         "(push (merge-pathnames
+         \"repos/lisp/\"
+         (user-homedir-pathname))
+        quicklisp-client:*local-project-directories*)"))
+
 (with-open-file (*standard-output* "/dev/null"
                                    :direction :output
                                    :if-exists :overwrite)
@@ -12,7 +18,8 @@
   (ql:quickload :optima)  (use-package :optima)
   (ql:quickload :osicat) ; (use-package :osicat)
   (ql:quickload :cl-ppcre) ; (use-package :osicat)
-  (ql:quickload :alexandria) (use-package :alexandria))
+  (ql:quickload :alexandria) (use-package :alexandria)
+  (ql:quickload :eazy-gnuplot) (use-package :eazy-gnuplot))
 
 
 ;;; domains and solvers
@@ -166,86 +173,6 @@
 ;; (associative-array-dimension a 1)
 
 
-;;; gnuplot
-
-(defun gp-quote (value)
-  (match value
-    ((type string) (format nil "\"~a\"" value))
-    (nil "")
-    ((type list)
-     (reduce (lambda (str val)
-               (format nil "~a ~a"
-                       str (gp-quote val)))
-             value))
-    (_ value)))
-
-(defun gp-map-args (args fn)
-  (iter (for keyword in args by #'cddr)
-        (for value in (cdr args) by #'cddr)
-        (funcall fn keyword value)))
-
-(defun gp-setup (&rest args
-                 &key
-                   (terminal :pdf terminal-p)
-                   (output nil output-p)
-                   &allow-other-keys)
-  (let ((*print-case* :downcase))
-    (unless terminal-p
-      (format t "~&set ~a ~a" :terminal (gp-quote terminal)))
-    (unless output-p
-      (format t "~&set ~a ~a" :output (gp-quote output)))
-    (gp-map-args args
-                 (lambda (key val)
-                   (format t "~&set ~a ~a"
-                           key (gp-quote val))))))
-
-
-(defvar *data-functions*)
-(defmacro with-plots (&body body)
-  `(let (*data-functions*)
-     (format t "~&plot")
-     ,@body
-     (dolist (fn (nreverse *data-functions*))
-       (funcall fn))))
-
-(defun plot (data-producing-fn &rest args
-             &key &allow-other-keys)
-  (let ((*print-case* :downcase))
-    (format t "~@[,~] '-'" *data-functions*)
-    (gp-map-args
-     args
-     (lambda (&rest args)
-       (match args
-         ((list :using (and val (type list)))
-          (format t " using ~{~a~^:~}" val))
-         ((list :continue _)
-          ) ; do nothing
-         ((list key val)
-          (format t " ~a ~a"
-                  key (gp-quote val))))))
-    (push
-     (lambda ()
-       (funcall data-producing-fn)
-       (format t "~&end"))
-     *data-functions*)))
-
-(defun nop ())
-(defun func-plot (string &rest args
-                  &key &allow-other-keys)
-  (let ((*print-case* :downcase))
-    (format t "~@[,~] ~a" *data-functions* string)
-    (gp-map-args
-     args
-     (lambda (&rest args)
-       (match args
-         ((list :using (and val (type list)))
-          (format t " using ~{~a~^:~}" val))
-         ((list :continue _)
-          ) ; do nothing
-         ((list key val)
-          (format t " ~a ~a"
-                  key (gp-quote val))))))
-    (push #'nop *data-functions*)))
 ;;; main
 
 
@@ -266,14 +193,14 @@
                    (setf (aaref db domain prob solver) data)))))
       (end-of-file (c)
         (let ((solvers (associative-array-dimension db 2)))
-          (gp-setup :xlabel (format nil "cost ~a" (first solvers))
-                    :ylabel (format nil "cost ~a" (second solvers))
-                    :output (format nil "~a-~a.pdf"
-                                    (first solvers)
-                                    (second solvers))
-                    :key '(:bottom :right :font "Times New Roman, 6")
-                    :pointsize "0.4px")
-          (with-plots
+          (with-plots (*standard-output*)
+            (gp-setup :xlabel (format nil "cost ~a" (first solvers))
+                      :ylabel (format nil "cost ~a" (second solvers))
+                      :output (format nil "~a-~a.pdf"
+                                      (first solvers)
+                                      (second solvers))
+                      :key '(:bottom :right :font "Times New Roman, 6")
+                      :pointsize "0.4px")
             (func-plot "x")
             (mapc (lambda (domain)
                     (plot (lambda ()
@@ -285,7 +212,7 @@
                                  (iter (for solver in solvers)
                                        (maximizing
                                         (match (aaref db domain prob solver)
-                                          ((list* _ _ _ _ cost _)
+                                          ((list* _ _ _ _ _ cost _)
                                            cost)
                                           (_ -1))))))))
                      (iter (for prob in (sort (associative-array-dimension db 1)
@@ -296,7 +223,7 @@
                                       (collect
                                        (float
                                           (/ (match data
-                                               ((list* _ _ _ _ cost _)
+                                               ((list* _ _ _ _ _ cost _)
                                                 cost)
                                                (_ -1))
                                              max/domain)))))
