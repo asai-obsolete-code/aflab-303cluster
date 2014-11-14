@@ -3,6 +3,7 @@
 rm -v *.pdf
 
 ./preprocess.sh
+./preprocess-per-domain.sh
 ./costs.sh
 
 basedirname=$(basename $(pwd))
