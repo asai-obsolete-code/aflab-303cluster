@@ -12,3 +12,4 @@ dir=~/Dropbox/FukunagaLabShare/repos/icaps15/$basedirname/
 rm -rv $dir
 mkdir -pv $dir
 cp -fv *.pdf $dir
+cp -fv *.png $dir
