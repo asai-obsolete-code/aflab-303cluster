@@ -15,6 +15,7 @@ fn (){
 
 targets (){
     ls -1 -d */ | grep -v planner-scripts
+    ls *.summary
 }
 
 name=${1:-$(fn)}
