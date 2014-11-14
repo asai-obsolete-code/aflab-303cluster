@@ -23,4 +23,5 @@ echo $name
 
 tar czf $name.tar.gz $(targets)
 
-mv -vb *.tar.gz ../results/
+cp -v  $name.tar.gz ~/Dropbox/component-planner/
+mv -vb $name.tar.gz ../results/
