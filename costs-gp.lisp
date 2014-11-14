@@ -285,7 +285,7 @@
                                  (iter (for solver in solvers)
                                        (maximizing
                                         (match (aaref db domain prob solver)
-                                          ((list* _ _ _ cost _)
+                                          ((list* _ _ _ _ cost _)
                                            cost)
                                           (_ -1))))))))
                      (iter (for prob in (sort (associative-array-dimension db 1)
@@ -296,7 +296,7 @@
                                       (collect
                                        (float
                                           (/ (match data
-                                               ((list* _ _ _ cost _)
+                                               ((list* _ _ _ _ cost _)
                                                 cost)
                                                (_ -1))
                                              max/domain)))))

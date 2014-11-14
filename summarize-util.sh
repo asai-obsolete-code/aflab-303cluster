@@ -131,7 +131,7 @@ mapconf (){
         export err=$probname.$config.err
         export stat=$probname.$config.stat
         export length=$(min $(map countline $(ls $probname.$config.plan* 2>/dev/null )))
-        export elapsed=$(grep "^real" $stat | cut -d " " -f 2)
+        export elapsed=$(grep "Wall time" $log | cut -d " " -f 3)
         export usage=$(grep "^maxmem" $stat | cut -d " " -f 2)
         if $pred
         then
@@ -241,8 +241,9 @@ actioncost (){
 
     numeval=$(grep "Number of component plan evaluation:" $log | cut -d ' ' -f 6)
     numcomp=$(grep "Number of comparison:" $log | cut -d ' ' -f 4)
-    
-    preprocess=$(grep "[0-9.]* seconds of real time" $log | cut -d ' ' -f 3)
+
+    forward=$(grep "Forward-macro computation" $log | cut -d " " -f 3)
+    preprocess=$(grep "Preprocessing time" $log | cut -d " " -f 3)
 
     # basic info
     # memory infomation
@@ -250,7 +251,7 @@ actioncost (){
     # CAP infomation
 
     wrap echo -n \
-        $(safe-echo domname probname solver time mem elapsed preprocess usage cost length macrousage metalength forwardmacro cyclicmacro numeval numcomp)
+        $(safe-echo domname probname solver time mem elapsed preprocess forward usage cost length macrousage metalength forwardmacro cyclicmacro numeval numcomp)
     echo
 }
 
@@ -263,7 +264,8 @@ parproblem-std (){
     numeval=0
     numcomp=0
     preprocess=0
+    forward=0
     wrap echo -n \
-        $(safe-echo domname probname solver time mem elapsed preprocess usage cost length macrousage metalength forwardmacro cyclicmacro numeval numcomp)
+        $(safe-echo domname probname solver time mem elapsed preprocess forward usage cost length macrousage metalength forwardmacro cyclicmacro numeval numcomp)
     echo
 }
