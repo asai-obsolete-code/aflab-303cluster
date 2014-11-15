@@ -103,11 +103,8 @@ mapdir (){
 }
 
 mapprob (){
-    find -regex ".*/p[0-9]+\.pddl" | \
-        while read problem ; do
-        ( echo $(basename $problem .pddl) | cut -c2- ) ; done | \
-            sort -g | \
-            while read pnum ;
+    for pnum in $(map $(lambda problem -- 'echo $(basename $problem .pddl) | cut -c2- ')\
+                      $(find -regex ".*/p[0-9]+\.pddl") | sort -g)
     do
         export pnum
         export probname=p$pnum
