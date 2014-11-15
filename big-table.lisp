@@ -194,7 +194,7 @@
 ;;; main
 
 (defvar *db*)
-(defun myprint ()
+(defun myprint (title)
   (let ((*db* (associative-array 3)))
     (handler-case
         (iter (match (read *standard-input*)
@@ -241,7 +241,7 @@
           (hline)
           (end "tabular")
           (egroup)
-          (caption "Mockup of the BIG TABLE")
+          (caption title)
           (end "table*"))))))
 
 (defun summary (ratios)
@@ -303,7 +303,6 @@
                           (float (/ c1 c2)))))))
            (r (summary ratios))))))
 
-(myprint ;; (parse-integer (second sb-ext:*posix-argv*))
-         )
+(myprint (second sb-ext:*posix-argv*))
 
 (terpri)
