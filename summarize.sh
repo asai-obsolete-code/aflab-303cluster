@@ -5,8 +5,18 @@
 sd=$(pwd)
 
 run (){
-    main $(lambda -- "[[ \$length != '' ]]") dispatch
+    # main $(lambda -- "[[ \$length != '' ]]") dispatch
+    main true dispatch
 }
+
+# ext (){
+#     if [[ $length != '' ]]
+#     then
+#         echo summary
+#     else
+#         echo failed
+#     fi
+# }
 
 dispatch (){
     case $solver in
@@ -32,6 +42,5 @@ dispatch-dbg (){
     esac
 }
 
-
-find -name "*summary" -delete
+rm -fv *.summary *.failed
 run

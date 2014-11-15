@@ -150,7 +150,7 @@
                                                            #'string<))
                                         (format t "~&~a"
                                                 (match (aaref db domain prob solver)
-                                                  ((list* elapsed preprocess _)
+                                                  ((list* elapsed preprocess _ _ (satisfies plusp) _)
                                                    (float (/ preprocess elapsed)))
                                                   (_ :nan))))))
                           :title (princ-to-string solver)
