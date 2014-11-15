@@ -206,15 +206,14 @@
           (begin "table*")(princ "[h]")
           (centering)(bgroup)(relsize -2)
           (begin "tabular"
-                 (concatenate 'string
-                              "|c|" ;domain
-                              "c|cc|c||" ;ff ff2 ff2 ff2 * 5 pairs
-                              "c|cc|c||" ;ff ff2 ff2 ff2 * 5 pairs
-                              "c|cc|c||" ;ff ff2 ff2 ff2 * 5 pairs
-                              "c|cc|c||" ;ff ff2 ff2 ff2 * 5 pairs
-                              "c|cc|c||" ;ff ff2 ff2 ff2 * 5 pairs
-                              "cc|c|" ; fffd
-                               ))
+                 (apply #'concatenate 'string
+                        (flatten
+                         (list "|c|" ;domain
+                               (make-list 5 :initial-element
+                                          ;; "c|ccc|c||"
+                                          "c|cc|c||")
+                                        ;ff ff2 ff2 ff2 * 5 pairs
+                               "ccc|c|")))) ; fffd
           (terpri)
           (princ
            (last-&-newline
@@ -225,7 +224,11 @@
                (r)
                (hline)
                (iter (for d in (associative-array-dimension *db* 0))
-                     (r d)))                ;domain
+                     (r (format nil "~a(~a)"
+                                (rename-domain d)
+                                (max-problem-number d)))) ;domain
+               (hline)
+               (r "sum"))
              (base-column 'ff)
              (cap-column 'ff 'ff2)
              (base-column 'fd)
@@ -259,33 +262,124 @@
     (r*)
     (iter (for d in (associative-array-dimension *db* 0))
           (r (iter (for p in (associative-array-dimension *db* 1))
-                   (counting (aaref *db* d p base)))))))
+                   (counting
+                    (match (aaref *db* d p base)
+                      ((list* _ _ _ _ (satisfies plusp) _) t))))))
+    (r*)
+    (r (iter outer
+             (for d in (associative-array-dimension *db* 0))
+             (iter (for p in (associative-array-dimension *db* 1))
+                   (in outer
+                       (counting
+                        (match (aaref *db* d p base)
+                          ((list* _ _ _ _ (satisfies plusp) _) t)))))))))
 
 (defun cap-column (base cap)
   (combine-columns
+   ;; coverage
    (with-output-to-string (*standard-output*)
      (r*)
-     (multicolumn 2 "|c|" (rename-solver cap)) (r*)
+     (multicolumn 2 "|c|" (rename-solver cap)) (r)
      (r "\\#")
      (r*)
      (iter (for d in (associative-array-dimension *db* 0))
            (r (iter (for p in (associative-array-dimension *db* 1))
-                    (counting (aaref *db* d p cap))))))
+                    (counting
+                     (match (aaref *db* d p cap)
+                       ((list* _ _ _ _ (satisfies plusp) _) t))))))
+     (r*)
+     (r (iter outer
+              (for d in (associative-array-dimension *db* 0))
+              (iter (for p in (associative-array-dimension *db* 1))
+                    (in outer
+                        (counting
+                         (match (aaref *db* d p cap)
+                            ((list* _ _ _ _ (satisfies plusp) _) t))))))))
+   ;; preprocessing
    (with-output-to-string (*standard-output*)
      (r*)
-     (r)
-     (r "pp/wall")
+     (r*)
+     (r "\\spc{pp[sec]/wall[sec]\\_mean(sd)\\_solved/unsolved}")
      (r*)
      (iter (for d in (associative-array-dimension *db* 0))
            (for ratios =
                 (iter (for p in (associative-array-dimension *db* 1))
                       (match (aaref *db* d p cap)
-                        ((list* 0 _)
-                         (warn "skipped"))
-                        ((list* elapsed preprocess _)
+                        ((list* elapsed preprocess _ _ (satisfies plusp) _)
                          (collecting
                           (float (/ preprocess elapsed)))))))
-           (r (summary ratios))))
+           (for fratios =
+                (iter (for p in (associative-array-dimension *db* 1))
+                      (match (aaref *db* d p cap)
+                        ((list* elapsed preprocess _ _ (satisfies minusp) _)
+                         (collecting
+                          (float (/ preprocess elapsed)))))))
+           (r (format nil "~a/~a" (summary ratios) (summary fratios))))
+     (r*)
+     (r (format
+         nil "~a/~a"
+         (summary
+          (iter (for d in (associative-array-dimension *db* 0))
+                (appending
+                 (iter (for p in (associative-array-dimension *db* 1))
+                       (match (aaref *db* d p cap)
+                              ((list* elapsed preprocess _ _ (satisfies plusp) _)
+                               (collecting
+                                (float (/ preprocess elapsed)))))))))
+         (summary
+          (iter (for d in (associative-array-dimension *db* 0))
+                (appending
+                 (iter (for p in (associative-array-dimension *db* 1))
+                       (match (aaref *db* d p cap)
+                              ((list* elapsed preprocess _ _ (satisfies minusp) _)
+                               (collecting
+                                (float (/ preprocess elapsed))))))))))))
+      ;; (with-output-to-string (*standard-output*)
+   ;;   (r*)
+   ;;   (r*)
+   ;;   (r "\\spc{pp[sec]/wall[sec]\\_ave.(sd)\\_solved/unsolved}")
+   ;;   (r*)
+   ;;   (iter (for d in (associative-array-dimension *db* 0))
+   ;;         (for ratios =
+   ;;              (iter (for p in (associative-array-dimension *db* 1))
+   ;;                    (match (aaref *db* d p cap)
+   ;;                      ((list* elapsed preprocess _ _ (satisfies plusp) _)
+   ;;                       (collecting
+   ;;                        (float (/ preprocess elapsed)))))))
+   ;;         (r (summary ratios)))
+   ;;   (r*)
+   ;;   (r (summary
+   ;;       (iter (for d in (associative-array-dimension *db* 0))
+   ;;             (appending
+   ;;              (iter (for p in (associative-array-dimension *db* 1))
+   ;;                    (match (aaref *db* d p cap)
+   ;;                      ((list* elapsed preprocess _ _ (satisfies plusp) _)
+   ;;                       (collecting
+   ;;                        (float (/ preprocess elapsed)))))))))))
+   ;; ;; preprocessing -- on failure instances
+   ;; (with-output-to-string (*standard-output*)
+   ;;   (r*)
+   ;;   (r*)
+   ;;   (r "\\spc{pp/wall\\_(unsolved)}")
+   ;;   (r*)
+   ;;   (iter (for d in (associative-array-dimension *db* 0))
+   ;;         (for ratios =
+   ;;              (iter (for p in (associative-array-dimension *db* 1))
+   ;;                    (match (aaref *db* d p cap)
+   ;;                      ((list* elapsed preprocess _ _ (satisfies minusp) _)
+   ;;                       (collecting
+   ;;                        (float (/ preprocess elapsed)))))))
+   ;;         (r (summary ratios)))
+   ;;   (r*)
+   ;;   (r (summary
+   ;;       (iter (for d in (associative-array-dimension *db* 0))
+   ;;             (appending
+   ;;              (iter (for p in (associative-array-dimension *db* 1))
+   ;;                    (match (aaref *db* d p cap)
+   ;;                      ((list* elapsed preprocess _ _ (satisfies minusp) _)
+   ;;                       (collecting
+   ;;                        (float (/ preprocess elapsed)))))))))))
+   ;; cost
    (with-output-to-string (*standard-output*)
      (r*)
      (r "cost")
@@ -297,11 +391,23 @@
                       (multiple-value-match
                           (values (aaref *db* d p base)
                                   (aaref *db* d p cap))
-                        (((list* _ _ _ _ c1 _)
-                          (list* _ _ _ _ c2 _))
+                        (((list* _ _ _ _ (and c1 (satisfies plusp)) _)
+                          (list* _ _ _ _ (and c2 (satisfies plusp)) _))
                          (collecting
                           (float (/ c1 c2)))))))
-           (r (summary ratios))))))
+           (r (summary ratios)))
+     (r*)
+     (r (summary
+         (iter (for d in (associative-array-dimension *db* 0))
+               (appending
+                (iter (for p in (associative-array-dimension *db* 1))
+                      (multiple-value-match
+                          (values (aaref *db* d p base)
+                                  (aaref *db* d p cap))
+                        (((list* _ _ _ _ (and c1 (satisfies plusp)) _)
+                          (list* _ _ _ _ (and c2 (satisfies plusp)) _))
+                         (collecting
+                          (float (/ c1 c2)))))))))))))
 
 (myprint (second sb-ext:*posix-argv*))
 
