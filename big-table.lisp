@@ -34,21 +34,32 @@
 
 (defun rename-domain (domain)
   (case domain
-    (barman 'barman-l)
-    (cell-assembly-noneg-nocost 'assembly-mixed)
-    (elev-lessfloors 'elev-9floors)
-    (elev-20floor 'elev-20floors)       ; plural
-    (elev-40floor 'elev-40floors)
-    (gripper 'gripper-l)
-    (openstacks-nocost 'openstacks-l)
-    (rovers 'rovers-l)
-    (satellite-typed2 'satellite-l)
-    (barman 'barman-l)
-    (woodworking-sat11-nocost 'woodworking-l)
-    (pipesworld-notankage 'pipesworld-nt)
-    (pipesworld-tankage 'pipesworld)
-    (tpp 'tpp-l)
-    (miconic 'miconic-l)
+    ;; rather old (aaai15)
+    ;; (barman 'barman-l)
+    ;; (cell-assembly-noneg-nocost 'assembly-mixed)
+    ;; (elev-lessfloors 'elev-9floors)
+    ;; (elev-20floor 'elev-20floors)       ; plural
+    ;; (elev-40floor 'elev-40floors)
+    ;; (gripper 'gripper-l)
+    ;; (openstacks-nocost 'openstacks-l)
+    ;; (rovers 'rovers-l)
+    ;; (satellite-typed2 'satellite-l)
+    ;; (barman 'barman-l)
+    ;; (woodworking-sat11-nocost 'woodworking-l)
+    ;; (pipesworld-notankage 'pipesworld-nt)
+    ;; (pipesworld-tankage 'pipesworld)
+    ;; (tpp 'tpp-l)
+    ;; (miconic 'miconic-l)
+
+    (barman 'barman-large)
+    (assembly-mixed 'assembly-mixed-large)
+    (elevators 'elevators-large)
+    (openstacks 'openstacks-large)
+    (rovers 'rovers-large)
+    (woodworking 'woodworking-large)
+    (transport 'transport-large)
+    (tidybot 'tidybot-large)
+    (visitall 'visitall-large)
     (t domain)))
 
 (defvar *nonipc-domains*
@@ -168,7 +179,7 @@
                  (lambda (&rest cells)
                    (apply #'concatenate 'string cells))
                  (mapcar (lambda (str) (ppcre:split #\Newline str))
-                         strings))))
+                         (remove nil strings)))))
 ;; (combine-rows
 ;;  "aaa|
 ;; aaa|
@@ -198,8 +209,10 @@
 ;;; main
 
 (defvar *db*)
-(defvar %)
-(defun myprint (title %)
+(defvar % nil)
+(defun myprint (&aux
+                  (title (second sb-ext:*posix-argv*))
+                  (mode (or (third sb-ext:*posix-argv*) "std")))
   (let ((*db* (associative-array 3)))
     (handler-case
         (iter (match (read *standard-input*)
@@ -210,47 +223,70 @@
               (*print-case* :downcase))
           (begin "table*")(princ "[h]")
           (centering)(bgroup)(relsize -2)
-          (begin "tabular"
-                 (apply #'concatenate 'string
-                        (flatten
-                         (list "|c|" ;domain
-                               (make-list 4 :initial-element
-                                          ;; "c|ccc|c||"
-                                          "c|cc|c||")
-                                        ;ff ff2 ff2 ff2 * 5 pairs
-                               "cc|c|")))) ; fffd
-          (terpri)
-          (princ
-           (last-&-newline
-            (combine-columns
-             (with-output-to-string (*standard-output*)
-               (hline)
-               (r :domain)
-               (r)
-               (hline)
-               (iter (for d in (associative-array-dimension *db* 0))
-                     (r (format nil "{\\relsize{-1}~a(~a)}"
-                                (rename-domain d)
-                                (max-problem-number d)))) ;domain
-               (hline)
-               (r (if % "overall" "sum")))
-             (base-column 'ff)
-             (cap-column 'ff 'ff2)
-             (base-column 'fd)
-             (cap-column 'fd 'fd2)
-             (base-column 'probe)
-             (cap-column 'probe 'probe2)
-             (base-column 'cea)
-             (cap-column 'cea 'cea2)
-             ;; (base-column 'mv)
-             ;; (cap-column 'mv 'mv2)
-             (cap-column 'fd 'fffd))))
-          (princ "\\\\")
-          (hline)
-          (end "tabular")
+          (funcall
+           (symbol-function
+            (read-from-string mode)))
           (egroup)
           (caption title)
           (end "table*"))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun std ()
+  (begin "tabular" "|c|*{4}{c|cc|c||}cc|c|")
+  (terpri)
+  (princ
+   (last-&-newline
+    (combine-columns
+     (first-column)
+     (base-column 'ff)
+     (cap-column 'ff 'ff2)
+     (base-column 'fd)
+     (cap-column 'fd 'fd2)
+     (base-column 'probe)
+     (cap-column 'probe 'probe2)
+     (base-column 'cea)
+     (cap-column 'cea 'cea2)
+     (cap-column 'fd 'fffd))))
+  (princ "\\\\")
+  (hline)
+  (end "tabular"))
+
+(defun timelimit ()
+  (begin "tabular" "|c|*{5}{ccc|}")
+  (terpri)
+  (princ
+   (last-&-newline
+    (combine-columns
+     (first-column)
+     (timelimit-column 'ff 'ff2tl 'ff2)
+     (timelimit-column 'fd 'fd2tl 'fd2)
+     (timelimit-column 'cea 'cea2tl 'cea2)
+     (timelimit-column 'prove 'prove2tl 'prove2)
+     (timelimit-column 'fd 'fffdtl 'fffd))))
+  (princ "\\\\")
+  (hline)
+  (end "tabular"))
+
+(defun appendix ()
+  (begin "tabular" "|c|*{4}{c|ccc|c||}ccc|c|")
+  (terpri)
+  (princ
+   (last-&-newline
+    (combine-columns
+     (first-column)
+     (base-column 'ff)
+     (cap-column 'ff 'ff2 t)
+     (base-column 'fd)
+     (cap-column 'fd 'fd2 t)
+     (base-column 'probe)
+     (cap-column 'probe 'probe2 t)
+     (base-column 'cea)
+     (cap-column 'cea 'cea2 t)
+     (cap-column 'fd 'fffd t))))
+  (princ "\\\\")
+  (hline)
+  (end "tabular"))
 
 (defun summary (ratios)
   (if ratios
@@ -259,10 +295,21 @@
               (standard-deviation ratios))
       "-"))
 
-
 (defun %# (count all)
   (if % (floor (* 100 (/ count all))) count))
 
+(defun first-column ()
+  (with-output-to-string (*standard-output*)
+    (hline)
+    (r :domain)
+    (r)
+    (hline)
+    (iter (for d in (associative-array-dimension *db* 0))
+          (r (format nil "{\\relsize{-1}~a(~a)}"
+                     (rename-domain d)
+                     (max-problem-number d)))) ;domain
+    (hline)
+    (r (if % "overall" "sum"))))
 (defun show-coverage/domain (solver)
   (iter (for d in (associative-array-dimension *db* 0))
         (r (iter nil
@@ -296,22 +343,39 @@
     (r*)
     (show-coverage/overall base)))
 
-(defun cap-column (base cap)
+(defun cap-column (base cap &optional full)
   (combine-columns
    ;; coverage %
    (with-output-to-string (*standard-output*)
      (r*)
-     (multicolumn 2 "|c|" (rename-solver cap)) (r)
+     (multicolumn (if full 3 2) "|c|" (rename-solver cap)) (r)
      (r (if % "\\%" "\\#"))
      (r*)
      (show-coverage/domain cap)
      (r*)
      (show-coverage/overall cap))
    ;; preprocessing
-   (preprocessing-success+failure base cap)
+   (if full
+       (preprocessing-success/failure base cap)
+       (preprocessing-success+failure base cap))
+   (when full
+     (length-ratio cap))
    ;; cost
    (cost-ratio base cap)))
 
+(defun timelimit-column (base tl cap)
+  (with-output-to-string (*standard-output*)
+    (r*) (r (rename-solver base)) (r "\\#") (r*)
+    (show-coverage/domain base) (r*)
+    (show-coverage/overall base))
+  (with-output-to-string (*standard-output*)
+    (r*) (r (rename-solver tl)) (r "\\#") (r*)
+    (show-coverage/domain tl) (r*)
+    (show-coverage/overall tl))
+  (with-output-to-string (*standard-output*)
+    (r*) (r (rename-solver cap)) (r "\\#") (r*)
+    (show-coverage/domain cap) (r*)
+    (show-coverage/overall cap)))
 (defun preprocessing-success+failure (base cap)
   (with-output-to-string (*standard-output*)
     (r*)
@@ -458,8 +522,8 @@
 (defun length-ratio (cap)
   (with-output-to-string (*standard-output*)
     (r*)
-    (r "length")
-    (r "{\\relsize{-1}\\spc{macro/primitive\\_mean\\spm{}sd}}")
+    (r*)
+    (r "{\\relsize{-1}\\spc{length\\_macro/primitive\\_mean\\spm{}sd}}")
     (r*)
     (iter (for d in (associative-array-dimension *db* 0))
           (for ratios =
@@ -482,7 +546,27 @@
                          (float (/ metalength length))))))))))))
 
 
-(myprint (second sb-ext:*posix-argv*)
-         (third sb-ext:*posix-argv*))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;;; main
+
+(myprint)
 
 (terpri)

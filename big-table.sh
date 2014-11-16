@@ -11,4 +11,4 @@ then
     title=$name
 fi
 
-cat *.summary | $(dirname $(readlink -ef $0))/big-table.lisp $title | tee ~/repos/papers/aaai15/$name-table.tex
+cat *.summary | $(dirname $(readlink -ef $0))/big-table.lisp $title $2 | tee ~/repos/papers/aaai15/$name-table.tex
