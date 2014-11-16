@@ -214,7 +214,7 @@
                  (apply #'concatenate 'string
                         (flatten
                          (list "|c|" ;domain
-                               (make-list 5 :initial-element
+                               (make-list 4 :initial-element
                                           ;; "c|ccc|c||"
                                           "c|cc|c||")
                                         ;ff ff2 ff2 ff2 * 5 pairs
@@ -242,8 +242,8 @@
              (cap-column 'probe 'probe2)
              (base-column 'cea)
              (cap-column 'cea 'cea2)
-             (base-column 'mv)
-             (cap-column 'mv 'mv2)
+             ;; (base-column 'mv)
+             ;; (cap-column 'mv 'mv2)
              (cap-column 'fd 'fffd))))
           (princ "\\\\")
           (hline)
