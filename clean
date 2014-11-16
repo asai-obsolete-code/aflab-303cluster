@@ -1,32 +1,6 @@
 #!/bin/bash
 #-*- mode:sh -*-
 
-git clean -xf $(for bin in $(ls component-planner* README.org \
-    cgroup-setup.sh \
-    clean \
-    doubling-qsub.sh \
-    install.sh \
-    iterator.sh \
-    lama.sh \
-    map \
-    pack-per-node.sh \
-    pack-temp.sh \
-    pack.sh \
-    ps-all \
-    ps-per-node.sh \
-    pull.sh \
-    push.sh \
-    qsub-template.sh \
-    remove-per-node.sh \
-    remove-temp.sh \
-    shared-template.sh \
-    template.sh \
-    summarize.sh \
-    summarize-example.sh \
-    tarai.lisp \
-    test-doubling.sh \
-    utilities.sh \
-    watch.sh )
-    do
-    echo "-e $bin"
-    done)
+git clean -Xf -e component-planner
+
+./setup.sh
