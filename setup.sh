@@ -10,7 +10,7 @@ install (){
 install doubling
 install aaai15-config
 
-cp ~/repos/lisp/pddl.component-planner/component-planner ./
+cp ~/repos/lisp/pddl.component-planner/aaai/component-planner ./
 git submodule init
 git submodule update
 
