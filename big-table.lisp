@@ -96,6 +96,10 @@
     
     (mv '\\mv)
     (mv2 '\\mvmv)
+    ;; (mv '\\mv2)
+    ;; (mv2 '\\mv2mv2)
+    ;; (mvr1 '\\mv)
+    ;; (mvr12 '\\mvmv)
     (probe '\\pr)
     (probe2 '\\prpr)
     (solep '\\solep)
@@ -250,7 +254,7 @@
 
 (defun summary (ratios)
   (if ratios
-      (format nil "~3,1f(~3,1f)"
+      (format nil "~3,1f\\spm{}~3,1f"
               (mean ratios)
               (standard-deviation ratios))
       "-"))
@@ -276,19 +280,17 @@
            (iter (for p in (associative-array-dimension *db* 1))
                  (in outer
                      (counting
-                      (match (aaref *db* d p base)
+                      (match (aaref *db* d p solver)
                         ((list* _ _ _ _ (satisfies plusp) _) t))
                       into count)
                      (counting p into all)))
-           (finally
-            (return-from outer
-              (%# count all))))))
+           (finally (return-from outer (%# count all))))))
 
 (defun base-column (base)
   (with-output-to-string (*standard-output*)
     (r*)
     (r (rename-solver base))
-    (r "\\%")
+    (r (if % "\\%" "\\#"))
     (r*)
     (show-coverage/domain base)
     (r*)
@@ -300,7 +302,7 @@
    (with-output-to-string (*standard-output*)
      (r*)
      (multicolumn 2 "|c|" (rename-solver cap)) (r)
-     (r "\\%")
+     (r (if % "\\%" "\\#"))
      (r*)
      (show-coverage/domain cap)
      (r*)
@@ -309,9 +311,7 @@
    (with-output-to-string (*standard-output*)
      (r*)
      (r*)
-     ;; (r "\\spc{pp[sec]/wall[sec]\\_mean(sd)\\_solved/unsolved}")
-     ;; (r "\\spc{pp/wall\\_mean(sd)\\_solved/unsolved}")
-     (r "{\\relsize{-1}\\spc{pp/wall\\_mean(sd)\\_solved/failed}}")
+     (r "{\\relsize{-1}\\spc{pp/wall\\_mean\\spm{}sd\\_solved/failed}}")
      (r*)
      (iter (for d in (associative-array-dimension *db* 0))
            (for ratios =
