@@ -21,5 +21,5 @@ do
     fi
 done
 
-vecho "kill $@ $target"
+echo "kill $@ $target"
 kill $@ $target 2> /dev/null
