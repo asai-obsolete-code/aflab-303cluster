@@ -326,7 +326,7 @@
 
 (defun summary (ratios)
   (if ratios
-      (format nil "~2,1f\\spm{}~2,1f"
+      (format nil "~1,1f\\spm{}~1,1f"
               (mean ratios)
               (standard-deviation ratios))
       "-"))
