@@ -129,7 +129,7 @@ mapconf (){
         export stat=$probname.$config.stat
         export length=$(min $(map countline $(ls $probname.$config.plan* 2>/dev/null )))
         export elapsed=$(grep "Wall time" $log | cut -d " " -f 3)
-        export usage=$(grep "^maxmem" $stat | cut -d " " -f 2)
+        export usage=$(grep "^maxmem" $stat | head -n 1 | cut -d " " -f 2)
         if $pred
         then
             $@
