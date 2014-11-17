@@ -81,6 +81,7 @@ done
 export time mem maxtime maxmem maxcpu cgname cgcpu
 cgexec -g cpuacct,memory:$cgname $command &
 pid=$!
+echo "Program PID: $pid"
 
 cpuusage=$(($(< $cgcpu/cpuacct.usage) / 1000000))
 memusage=$(( $(< $cgmem/memory.max_usage_in_bytes) / 1024 ))
