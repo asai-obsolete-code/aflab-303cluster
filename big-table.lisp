@@ -413,7 +413,7 @@
   (with-output-to-string (*standard-output*)
     (r*)
     (r*)
-    (r "{\\relsize{-1}\\spc{pp/wall\\_mean\\spm{}sd}}")
+    (r "{\\relsize{-1}\\spc{pp/wall\\_ave.\\spm{}sd}}")
     (r*)
     (iter (for d in (associative-array-dimension *db* 0))
           (for ratios =
@@ -443,7 +443,7 @@
   (with-output-to-string (*standard-output*)
     (r*)
     (r*)
-    (r "{\\relsize{-1}\\spc{pp/wall\\_mean\\spm{}sd\\_solved/failed}}")
+    (r "{\\relsize{-1}\\spc{pp/wall\\_ave.\\spm{}sd\\_solved/failed}}")
     (r*)
     (iter (for d in (associative-array-dimension *db* 0))
           (for ratios =
@@ -531,7 +531,7 @@
   (with-output-to-string (*standard-output*)
     (r*)
     (r "cost")
-    (r "{\\relsize{-1}\\spc{cap/base\\_mean\\spm{}sd}}")
+    (r "{\\relsize{-1}\\spc{cap/base\\_ave.\\spm{}sd}}")
     (r*)
     (iter (for d in (associative-array-dimension *db* 0))
           (for ratios =
@@ -562,7 +562,7 @@
   (with-output-to-string (*standard-output*)
     (r*)
     (r*)
-    (r "{\\relsize{-1}\\spc{length\\_macro/primitive\\_mean\\spm{}sd}}")
+    (r "{\\relsize{-1}\\spc{length\\_macro/primitive\\_ave.\\spm{}sd}}")
     (r*)
     (iter (for d in (associative-array-dimension *db* 0))
           (for ratios =
