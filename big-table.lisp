@@ -90,20 +90,24 @@
     (ff2 '\\ffff)
     (ff2ncp '\\ffffncp)
     (ff2ncy '\\ffffncy)
+    (ff2tl '\\fffftl)
     
     (fd '\\fd)
     (fd2 '\\fdfd)
     (fd2ncp '\\fdfdncp)
     (fd2ncy '\\fdfdncy)
+    (fd2tl '\\fdfdtl)
     
     (cea '\\cea)
     (cea2 '\\cc)
     (cea2ncp '\\ccncp)
     (cea2ncy '\\ccncy)
+    (cea2tl '\\cctl)
 
     (fffd '\\fffd)
     (fffdncp '\\fffdncp)
     (fffdncy '\\fffdncy)
+    (fffdtl '\\fffdtl)
     
     (mv '\\mv)
     (mv2 '\\mvmv)
@@ -390,6 +394,17 @@
    ;;     (preprocessing-success/failure base cap))
    ;; (when full
    ;;   (length-ratio cap))
+
+(defun captl-column (cap)
+  ;; coverage %
+  (with-output-to-string (*standard-output*)
+    (r*)
+    (multicolumn 2 "|c|" (rename-solver cap)) (r)
+    (r (if % "\\%" "\\#"))
+    (r*)
+    (show-coverage/domain cap)
+    (r*)
+    (show-coverage/overall cap)))
 
 (defun preprocessing-success+failure (cap)
   (with-output-to-string (*standard-output*)
