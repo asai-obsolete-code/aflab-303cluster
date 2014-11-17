@@ -17,12 +17,15 @@ echo $(($mem * 1024)) > $cgmem/memory.memsw.limit_in_bytes
 
 pid=
 
-sleep=3
+sleep=60
 mykill (){
     ps $1 &> /dev/null && {
         pstree -p -H $1 $1
-        echodo $dir/killall.sh $1 SIGXCPU
-        echodo $dir/killall.sh $1 SIGTERM
+        # echodo $dir/killall.sh $1 SIGXCPU
+        # echodo $dir/killall.sh $1 SIGTERM
+        # echodo kill -s SIGXCPU $(pgrep -P $1)
+        # echodo kill -s SIGTERM $(pgrep -P $1)
+        echodo kill -n 30 $(pgrep -P $1)
         echodo sleep $sleep
         echo sleep end
         ps $1 &> /dev/null && {
