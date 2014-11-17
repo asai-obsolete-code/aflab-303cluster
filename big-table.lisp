@@ -117,6 +117,9 @@
     ;; (mvr12 '\\mvmv)
     (probe '\\pr)
     (probe2 '\\prpr)
+    (probe2ncp '\\prprncp)
+    (probe2ncy '\\prprncy)
+    (probe2tl '\\prprtl)
     (solep '\\solep)
     (t solver)))
 
@@ -262,7 +265,7 @@
   (end "tabular"))
 
 (defun large ()
-  (begin "tabular" "|c|*{4}{c|ccc|c||}ccc|c|")
+  (begin "tabular" "|c|*{4}{c|cc|c|c||}cc|c|c|")
   (terpri)
   (princ
    (last-&-newline
@@ -323,7 +326,7 @@
 
 (defun summary (ratios)
   (if ratios
-      (format nil "~,1f\\spm{}~,1f"
+      (format nil "~2,1f\\spm{}~2,1f"
               (mean ratios)
               (standard-deviation ratios))
       "-"))
@@ -399,7 +402,7 @@
   ;; coverage %
   (with-output-to-string (*standard-output*)
     (r*)
-    (multicolumn 2 "|c|" (rename-solver cap)) (r)
+    (r (rename-solver cap)) 
     (r (if % "\\%" "\\#"))
     (r*)
     (show-coverage/domain cap)
@@ -580,26 +583,6 @@
                                length _ metalength _)
                         (collecting
                          (float (/ metalength length))))))))))))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ;;; main
 
