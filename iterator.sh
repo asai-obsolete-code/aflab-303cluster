@@ -85,14 +85,24 @@ pid=$!
 cpuusage=$(($(< $cgcpu/cpuacct.usage) / 1000000))
 memusage=$(( $(< $cgmem/memory.max_usage_in_bytes) / 1024 ))
 
+start=$(date +%s)
+
 while ps $pid &> /dev/null
 do
     sleep 1
+    walltime=$(($(date +%s)-$start))
     cpuusage=$(($(< $cgcpu/cpuacct.usage) / 1000000))
     memusage=$(( $(< $cgmem/memory.max_usage_in_bytes) / 1024 ))
     if [[ $cpuusage -gt ${time}000 ]]
     then
         echo "cpuacct.usage exceeding. $cpuusage msec." >&2
+        mykill $pid
+        twice-time
+        break
+    fi
+    if [[ $walltime -gt $time ]]
+    then
+        echo "walltime exceeding. $walltime sec." >&2
         mykill $pid
         twice-time
         break
