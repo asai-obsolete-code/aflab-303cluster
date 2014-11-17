@@ -232,7 +232,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun std ()
+(defun ipc ()
   (begin "tabular" "|c|*{4}{c|cc|c||}cc|c|")
   (terpri)
   (princ
@@ -240,35 +240,24 @@
     (combine-columns
      (first-column)
      (base-column 'ff)
-     (cap-column 'ff 'ff2)
+     (cap-column 'ff2)
+     (cost-column 'ff 'ff2)
      (base-column 'fd)
-     (cap-column 'fd 'fd2)
+     (cap-column 'fd2)
+     (cost-column 'fd 'fd2)
      (base-column 'probe)
-     (cap-column 'probe 'probe2)
+     (cap-column 'probe2)
+     (cost-column 'probe 'probe2)
      (base-column 'cea)
-     (cap-column 'cea 'cea2)
-     (cap-column 'fd 'fffd))))
+     (cap-column 'cea2)
+     (cost-column 'cea 'cea2)
+     (cap-column 'fffd)
+     (cost-column 'fd 'fffd))))
   (princ "\\\\")
   (hline)
   (end "tabular"))
 
-(defun timelimit ()
-  (begin "tabular" "|c|*{5}{ccc|}")
-  (terpri)
-  (princ
-   (last-&-newline
-    (combine-columns
-     (first-column)
-     (timelimit-column 'ff 'ff2tl 'ff2)
-     (timelimit-column 'fd 'fd2tl 'fd2)
-     (timelimit-column 'cea 'cea2tl 'cea2)
-     (timelimit-column 'prove 'prove2tl 'prove2)
-     (timelimit-column 'fd 'fffdtl 'fffd))))
-  (princ "\\\\")
-  (hline)
-  (end "tabular"))
-
-(defun appendix ()
+(defun large ()
   (begin "tabular" "|c|*{4}{c|ccc|c||}ccc|c|")
   (terpri)
   (princ
@@ -276,21 +265,61 @@
     (combine-columns
      (first-column)
      (base-column 'ff)
-     (cap-column 'ff 'ff2 t)
+     (cap-column 'ff2)
+     (captl-column 'ff2tl)
+     (cost-column 'ff 'ff2)
      (base-column 'fd)
-     (cap-column 'fd 'fd2 t)
+     (cap-column 'fd2)
+     (captl-column 'fd2tl)
+     (cost-column 'fd 'fd2)
      (base-column 'probe)
-     (cap-column 'probe 'probe2 t)
+     (cap-column 'probe2)
+     (captl-column 'probe2tl)
+     (cost-column 'probe 'probe2)
      (base-column 'cea)
-     (cap-column 'cea 'cea2 t)
-     (cap-column 'fd 'fffd t))))
+     (cap-column 'cea2)
+     (captl-column 'cea2tl)
+     (cost-column 'cea 'cea2)
+     (cap-column 'fffd)
+     (captl-column 'fffdtl)
+     (cost-column 'fd 'fffd))))
   (princ "\\\\")
   (hline)
   (end "tabular"))
 
+;; (defun appendix ()
+;;   (begin "tabular" "|c|*{4}{c|ccc|c||}ccc|c|")
+;;   (terpri)
+;;   (princ
+;;    (last-&-newline
+;;     (combine-columns
+;;      (first-column)
+;;      (base-column 'ff)
+;;      (cap-column 'ff2)
+;;      (captl-column 'ff2tl)
+;;      (cost-column 'ff 'ff2)
+;;      (base-column 'fd)
+;;      (cap-column 'fd2)
+;;      (captl-column 'fd2tl)
+;;      (cost-column 'fd 'fd2)
+;;      (base-column 'probe)
+;;      (cap-column 'probe2)
+;;      (captl-column 'probe2tl)
+;;      (cost-column 'probe 'probe2)
+;;      (base-column 'cea)
+;;      (cap-column 'cea2)
+;;      (captl-column 'cea2tl)
+;;      (cost-column 'cea 'cea2)
+;;      (cap-column 'fffd)
+;;      (captl-column 'fffdtl)
+;;      (cost-column 'fd 'fffd))))
+;;   (princ "\\\\")
+;;   (hline)
+;;   (end "tabular"))
+
 (defun summary (ratios)
   (if ratios
-      (format nil "~3,1f\\spm{}~3,1f"
+      (format nil "~,1f\\spm{}~,1f"
               (mean ratios)
               (standard-deviation ratios))
       "-"))
@@ -343,40 +372,26 @@
     (r*)
     (show-coverage/overall base)))
 
-(defun cap-column (base cap &optional full)
-  (combine-columns
+(defun cap-column (cap)
    ;; coverage %
+  (combine-columns
    (with-output-to-string (*standard-output*)
      (r*)
-     (multicolumn (if full 3 2) "|c|" (rename-solver cap)) (r)
+     (multicolumn 2 "|c|" (rename-solver cap)) (r)
      (r (if % "\\%" "\\#"))
      (r*)
      (show-coverage/domain cap)
      (r*)
      (show-coverage/overall cap))
    ;; preprocessing
-   (if full
-       (preprocessing-success/failure base cap)
-       (preprocessing-success+failure base cap))
-   (when full
-     (length-ratio cap))
-   ;; cost
-   (cost-ratio base cap)))
+   (preprocessing-success+failure cap)))
 
-(defun timelimit-column (base tl cap)
-  (with-output-to-string (*standard-output*)
-    (r*) (r (rename-solver base)) (r "\\#") (r*)
-    (show-coverage/domain base) (r*)
-    (show-coverage/overall base))
-  (with-output-to-string (*standard-output*)
-    (r*) (r (rename-solver tl)) (r "\\#") (r*)
-    (show-coverage/domain tl) (r*)
-    (show-coverage/overall tl))
-  (with-output-to-string (*standard-output*)
-    (r*) (r (rename-solver cap)) (r "\\#") (r*)
-    (show-coverage/domain cap) (r*)
-    (show-coverage/overall cap)))
-(defun preprocessing-success+failure (base cap)
+   ;; (if full
+   ;;     (preprocessing-success/failure base cap))
+   ;; (when full
+   ;;   (length-ratio cap))
+
+(defun preprocessing-success+failure (cap)
   (with-output-to-string (*standard-output*)
     (r*)
     (r*)
@@ -388,7 +403,10 @@
                      (match (aaref *db* d p cap)
                        ((list* elapsed preprocess _)
                         (collecting
-                         (float (/ preprocess elapsed)))))))
+                         (float (/ preprocess
+                                   (if (minusp elapsed)
+                                       1800
+                                       elapsed))))))))
           (r (summary ratios)))
     (r*)
     (r (summary
@@ -398,7 +416,10 @@
                      (match (aaref *db* d p cap)
                        ((list* elapsed preprocess _)
                         (collecting
-                         (float (/ preprocess elapsed))))))))))))
+                         (float (/ preprocess
+                                   (if (minusp elapsed)
+                                       1800
+                                       elapsed)))))))))))))
 
 (defun preprocessing-success/failure (base cap)
   (with-output-to-string (*standard-output*)
@@ -488,7 +509,7 @@
                          (float (/ preprocess elapsed))))))))))))
 
 
-(defun cost-ratio (base cap)
+(defun cost-column (base cap)
   (with-output-to-string (*standard-output*)
     (r*)
     (r "cost")
