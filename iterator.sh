@@ -17,16 +17,19 @@ echo $(($mem * 1024)) > $cgmem/memory.memsw.limit_in_bytes
 
 pid=
 
-sleep=3
+sleep=60
 mykill (){
     ps $1 &> /dev/null && {
         pstree -p -H $1 $1
-        vechodo $dir/killall.sh $1 SIGXCPU
-        vechodo $dir/killall.sh $1 SIGTERM
-        vechodo sleep $sleep
-        vecho sleep end
+        # echodo $dir/killall.sh $1 SIGXCPU
+        # echodo $dir/killall.sh $1 SIGTERM
+        # echodo kill -s SIGXCPU $(pgrep -P $1)
+        # echodo kill -s SIGTERM $(pgrep -P $1)
+        echodo kill -n 30 $(pgrep -P $1)
+        echodo sleep $sleep
+        echo sleep end
         ps $1 &> /dev/null && {
-            vechodo $dir/killall.sh $1 -9
+            echodo $dir/killall.sh $1 -9
         }
     }
 }
@@ -81,18 +84,29 @@ done
 export time mem maxtime maxmem maxcpu cgname cgcpu
 cgexec -g cpuacct,memory:$cgname $command &
 pid=$!
+echo "Program PID: $pid"
 
 cpuusage=$(($(< $cgcpu/cpuacct.usage) / 1000000))
 memusage=$(( $(< $cgmem/memory.max_usage_in_bytes) / 1024 ))
 
+start=$(date +%s)
+
 while ps $pid &> /dev/null
 do
     sleep 1
+    walltime=$(($(date +%s)-$start))
     cpuusage=$(($(< $cgcpu/cpuacct.usage) / 1000000))
     memusage=$(( $(< $cgmem/memory.max_usage_in_bytes) / 1024 ))
     if [[ $cpuusage -gt ${time}000 ]]
     then
         echo "cpuacct.usage exceeding. $cpuusage msec." >&2
+        mykill $pid
+        twice-time
+        break
+    fi
+    if [[ $walltime -gt $time ]]
+    then
+        echo "walltime exceeding. $walltime sec." >&2
         mykill $pid
         twice-time
         break

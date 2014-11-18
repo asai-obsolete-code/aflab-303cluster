@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. summarize.sh
+. summarize-util.sh
 
 val=~/repos/downward/src/validate
 

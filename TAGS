@@ -1,0 +1,331 @@
+
+big-table.lisp,934
+(defun cut 22,680
+(defun max-problem-number 27,767
+(defun problem-p 32,913
+(defun rename-domain 35,994
+(defvar *nonipc-domains*54,1560
+(defun ipc-p 68,1838
+(defun segfault-p 71,1903
+(defun rename-solver 76,2075
+(defvar *solver-blacklist* 108,2643
+(defvar *domain-blacklist* 115,2949
+(defun remove-keywords 119,3034
+(defmacro deftex 143,3772
+(deftex begin 151,4042
+(deftex end 152,4082
+(deftex hline 153,4109
+(deftex centering 154,4136
+(deftex relsize 155,4167
+(deftex multicolumn 156,4191
+(deftex bgroup 159,4268
+(deftex egroup 160,4287
+(deftex caption 161,4306
+(defun combine-columns 165,4346
+(defun r 183,4766
+(defun r* 186,4878
+(defun last-&-newline 190,5035
+(defvar *db*)200,5314
+(defvar %)201,5328
+(defun myprint 202,5339
+(defun summary 255,7321
+(defun %# 263,7481
+(defun show-coverage/domain 266,7550
+(defun show-coverage/overall 277,7991
+(defun base-column 289,8485
+(defun cap-column 299,8707
+
+big-table.sh,11
+name=4,21
+
+cgroup-setup.sh,25
+sudo cgcreate -a $(3,13
+
+costs.lisp,320
+(defun cut 28,869
+(defun max-problem-number 33,956
+(defun problem-p 38,1102
+(defun rename-domain 41,1183
+(defvar *nonipc-domains*60,1749
+(defun ipc-p 74,2027
+(defun segfault-p 77,2092
+(defun rename-solver 82,2264
+(defvar *solver-blacklist* 110,2747
+(defvar *domain-blacklist* 117,3053
+(defun myprint 130,3292
+
+costs.sh,11
+plot 3,13
+
+coverage-tex.lisp,577
+(defun cut 22,680
+(defun max-problem-number 27,767
+(defun problem-p 32,913
+(defun rename-domain 35,994
+(defvar *nonipc-domains*54,1560
+(defun ipc-p 68,1838
+(defun segfault-p 71,1903
+(defun rename-solver 76,2075
+(defvar *solver-blacklist* 104,2558
+(defvar *domain-blacklist* 111,2864
+(defun remove-keywords 115,2949
+(defmacro deftex 139,3687
+(deftex begin 147,3957
+(deftex hline 148,3997
+(deftex multicolumn 149,4024
+(defun combine-columns 154,4117
+(defun r 172,4537
+(defun r* 175,4649
+(defvar *db*)181,4816
+(defun myprint 182,4830
+(defun coverage 214,6345
+
+coverage.lisp,365
+(defun cut 18,564
+(defun max-problem-number 23,651
+(defun problem-p 28,797
+(defun rename-domain 31,878
+(defvar *nonipc-domains*50,1444
+(defun ipc-p 64,1722
+(defun segfault-p 67,1787
+(defun rename-solver 72,1959
+(defvar *solver-blacklist* 100,2442
+(defvar *domain-blacklist* 106,2700
+(defun hline 108,2776
+(defun header 112,2896
+(defun myprint 116,3015
+
+doubling-qsub.sh,297
+dir=3,13
+        g) cgname=16,383
+        m) mem=17,427
+        M) maxmem=18,461
+        t) time=19,501
+        T) maxtime=20,537
+        P) maxcpu=21,579
+        d) debug=22,610
+        -) break;23,635
+        \?) OPT_ERROR=24,654
+        \?) OPT_ERROR=1; break;24,654
+shift $(29,748
+
+genpdf.sh,18
+basedirname=9,81
+
+install.sh,10
+dir=3,13
+
+iterator.sh,149
+pcgname=5,34
+cgname=6,63
+twice-time time34,706
+twice-mem mem48,1068
+finalize 62,1428
+        echo Error occured. status: $exitstatus117,2616
+
+length.lisp,484
+(defun cut 20,567
+(defun max-problem-number 25,654
+(defun problem-p 30,800
+(defun rename-domain 33,881
+(defvar *nonipc-domains*52,1447
+(defun ipc-p 66,1725
+(defun segfault-p 69,1790
+(defun rename-solver 74,1962
+(defvar *solver-blacklist* 102,2445
+(defvar *domain-blacklist* 108,2703
+(defstruct (associative-array 112,2796
+(defun associative-array 122,3126
+(defun aaref 131,3644
+(defun (setf 138,3883
+(defun associative-array-dimension 155,4654
+(defun myprint 172,5206
+
+macrousage-all.sh,13
+echo $(2,12
+
+macrousage.lisp,196
+(defpackage :macrousage14,276
+(defvar *dim* 22,536
+(defvar *max* 23,555
+(defvar scale 24,572
+(defun draw-point 26,590
+(defun draw-grid 30,662
+(defun draw-line 35,785
+(defun myprint 40,865
+
+map,127
+PARALLEL=4,30
+        p)  PARALLEL=8,90
+        \?) OPT_ERROR=11,178
+        \?) OPT_ERROR=1; break;11,178
+shift $(16,272
+
+mvrm,10
+tmp=3,13
+
+pack-per-node.sh,36
+echocat 3,13
+fn 7,49
+list=15,237
+
+pack.sh,83
+echocat 3,13
+fn 8,50
+targets 16,238
+name=21,312
+tar czf $name.tar.gz $(24,341
+
+preprocess-per-domain.lisp,486
+(defun cut 27,800
+(defun max-problem-number 32,887
+(defun problem-p 37,1033
+(defun rename-domain 40,1114
+(defvar *nonipc-domains*59,1680
+(defun ipc-p 73,1958
+(defun segfault-p 76,2023
+(defun rename-solver 81,2195
+(defvar *solver-blacklist* 109,2678
+(defvar *domain-blacklist* 116,2984
+(defstruct (associative-array 120,3077
+(defun associative-array 130,3407
+(defun aaref 139,3925
+(defun (setf 146,4164
+(defun associative-array-dimension 163,4935
+(defun myprint 184,5498
+
+preprocess.lisp,320
+(defun cut 28,869
+(defun max-problem-number 33,956
+(defun problem-p 38,1102
+(defun rename-domain 41,1183
+(defvar *nonipc-domains*60,1749
+(defun ipc-p 74,2027
+(defun segfault-p 77,2092
+(defun rename-solver 82,2264
+(defvar *solver-blacklist* 110,2747
+(defvar *domain-blacklist* 117,3053
+(defun myprint 126,3288
+
+ps-per-node.sh,473
+ps -u asai -o pid,3,13
+ps -u asai -o pid,ppid,3,13
+ps -u asai -o pid,ppid,pgid,3,13
+ps -u asai -o pid,ppid,pgid,%cpu,cpu3,13
+ps -u asai -o pid,ppid,pgid,%cpu,%mem,mem3,13
+ps -u asai -o pid,ppid,pgid,%cpu,%mem,rss,3,13
+ps -u asai -o pid,ppid,pgid,%cpu,%mem,rss,vsz,3,13
+ps -u asai -o pid,ppid,pgid,%cpu,%mem,rss,vsz,etime,3,13
+ps -u asai -o pid,ppid,pgid,%cpu,%mem,rss,vsz,etime,s,3,13
+ps -u asai -o pid,ppid,pgid,%cpu,%mem,rss,vsz,etime,s,comm --sort=sort3,13
+
+qsub-template.sh,183
+resources=5,29
+            run=11,205
+            resources=13,274
+        \?) OPT_ERROR=14,309
+        \?) OPT_ERROR=1; break 14,309
+shift $(19,404
+    export probname=44,944
+
+remove-per-node.sh,22
+old=3,13
+main 10,64
+
+setup.sh,14
+install 3,13
+
+summarize-util.sh,368
+map 3,13
+reduce 14,173
+gensym 28,450
+localdef 29,496
+localdefs 30,526
+lambda 38,643
+gt 56,966
+lt 57,1029
+ge 58,1092
+le 59,1155
+max 60,1218
+min 61,1242
+countline 63,1267
+echorun(67,1299
+wrap 72,1334
+main 82,1498
+mapdir 89,1613
+mapprob 105,1998
+mapconf 119,2343
+safe-echo echo140,3080
+val=215,5003
+actioncost 231,5322
+parproblem-std std255,6200
+
+summarize.sh,51
+sd=5,34
+dispatch 21,255
+dispatch-dbg dbg33,664
+
+tarai.lisp,19
+(defun tarai 6,72
+
+template.sh,10
+tmp=5,81
+
+test-doubling.sh,14
+outname=4,14
+
+utilities.sh,94
+echovar 3,13
+echodo 8,68
+kv(13,101
+kvs(17,143
+dkv(32,343
+dkvs(36,418
+exportargs=40,496
+
+validate-all.sh,10
+val=5,29
+
+watch.sh,0
+
+shared-template.sh,0
+
+run.sh,0
+
+remove-temp.sh,0
+
+qsub-here.sh,0
+
+qhold-all.sh,0
+
+push.sh,0
+
+pull.sh,0
+
+ps-all,0
+
+preprocess.sh,0
+
+preprocess-per-domain.sh,0
+
+pack-temp.sh,0
+
+length.sh,0
+
+length.gnuplot,0
+
+lama.sh,0
+
+killall.sh,0
+
+coverage-all.sh,0
+
+clean-cgroup.sh,0
+
+clean,0
+
+big-table.tex,0
+
+addexec,0
+
+README.org,0
