@@ -231,7 +231,7 @@ getcost (){
 metalength (){
     # 1st: for fd,cea, 2nd: for probe, ff
     min $(grep "Plan length:" $log | cut -d ' ' -f 3) \
-        $(grep -C 2 "Result:" $log | grep "Plan cost:" | cut -d ' ' -f 3)
+        $(grep -C 2 "Result:" $log | grep "Plan cost:" | cut -d ' ' -f 4) # double space
 }
 
 actioncost (){
