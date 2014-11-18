@@ -1,14 +1,7 @@
 #!/bin/bash
 # start
 
-name=$(basename $(pwd))
+# name=$(basename $(pwd))
+#  | tee ~/repos/papers/aaai15/$name-table.tex
 
-title=$1
-
-if [[ $title == "" ]]
-then
-    echo "no title, substituting with the dirname $name" >&2
-    title=$name
-fi
-
-cat *.summary | $(dirname $(readlink -ef $0))/big-table.lisp $title $2 | tee ~/repos/papers/aaai15/$name-table.tex
+cat *.summary | $(dirname $(readlink -ef $0))/big-table.lisp $@
