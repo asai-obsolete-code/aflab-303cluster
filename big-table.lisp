@@ -231,6 +231,14 @@
 (defvar *argv* (copy-list (cdr sb-ext:*posix-argv*)))
 (defun myprint (&aux (mode (or (pop *argv*) "ipc"))
                   (title (or (pop *argv*) mode)))
+  (let ((dir (lastcar (pathname-directory *default-pathname-defaults*))))
+    (print dir)
+    (with-open-file (s (format nil "~~/repos/papers/aaai15/~a-~a-table.tex"
+                               dir mode)
+                       :direction :output
+                       :if-does-not-exist :create
+                       :if-exists :supersede)
+      (let ((*standard-output* (make-broadcast-stream s *standard-output*)))
   (let ((*db* (associative-array 3)))
     (handler-case
         (iter (match (read *standard-input*)
@@ -239,20 +247,14 @@
       (end-of-file (c)
         (let ((solvers (associative-array-dimension *db* 2))
               (*print-case* :downcase))
-          (begin "table*")(princ "[htb]")
-          (centering)(bgroup)(relsize -2)
           (funcall
            (symbol-function
-            (read-from-string mode)))
-          (egroup)
-          (caption title)
-          (label (format nil "tab:~a" mode))
-          (end "table*"))))))
+                  (read-from-string mode)))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun ipc ()
-  (begin "tabular" "|c|*{4}{c|ccc|c||}ccc|c|")
+  (begin "tabular" "|c|*{4}{c|cc|c||}cc|c|")
   (terpri)
   (princ
    (last-&-newline
@@ -277,7 +279,7 @@
   (end "tabular"))
 
 (defun large ()
-  (begin "tabular" "|c|*{4}{c|ccc|c|c||}ccc|c|c|")
+  (begin "tabular" "|c|*{4}{c|cc|c|c||}cc|c|c|")
   (terpri)
   (princ
    (last-&-newline
@@ -411,8 +413,8 @@
 (defun cap-column (cap)
   (combine-columns
    ;; coverage %
-   (show-coverage cap 3)
-   (length-ratio cap)
+   (show-coverage cap 2)
+   ;; (length-ratio cap)
    (preprocessing-success+failure cap)))
 
    ;; (if full
@@ -609,15 +611,55 @@
                         (collecting
                          (float (/ metalength length))))))))))))
 
+;;;; search behavior
+
+(defun search-behavior ()
+  (begin "tabular" "|c|*{5}{c|}")
+  (terpri)
+  (princ
+   (last-&-newline
+    (combine-columns
+     (first-column)
+     (sb-column 'ff2)
+     (sb-column 'fd2)
+     (sb-column 'probe2)
+     (sb-column 'cea2)
+     (sb-column 'fffd))))
+  (princ "\\\\")
+  (hline)
+  (end "tabular"))
+
+(defun sb-column (cap)
+  (with-output-to-string (*standard-output*)
+    (r*)
+    (r (rename-solver cap)) 
+    (r "{\\relsize{-1}\\spc{$l_e/l_p$\\_ave.\\spm{}sd}}")
+    (r*)
+    (iter (for d in (sort (domains)
+                          #'string<))
+          (for ratios =
+               (iter (for p in (problems))
+                     (match (aaref *db* d p cap)
+                       ((list* _ _ _ _ _
+                               (and length (satisfies plusp)) _
+                               (and metalength (satisfies plusp)) _ _)
+                        (collecting
+                         (float (/ metalength length)))))))
+          (r (summary ratios)))
+    (r*)
+    (r (summary
+        (iter (for d in (domains))
+              (appending
+               (iter (for p in (problems))
+                     (match (aaref *db* d p cap)
+                       ((list* _ _ _ _ _
+                               (and length (satisfies plusp)) _
+                               (and metalength (satisfies plusp)) _ _)
+                        (collecting
+                         (float (/ metalength length))))))))))))
+
 ;;; main
 
-(let ((dir (lastcar (pathname-directory *default-pathname-defaults*))))
-  (print dir)
-  (with-open-file (s (format nil "~~/repos/papers/aaai15/~a-table.tex" dir)
-                     :direction :output
-                     :if-does-not-exist :create
-                     :if-exists :supersede)
-    (let ((*standard-output* (make-broadcast-stream s *standard-output*)))
-      (myprint))))
+(myprint)
 
 (terpri)
