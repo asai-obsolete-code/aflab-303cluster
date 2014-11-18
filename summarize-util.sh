@@ -266,3 +266,23 @@ parproblem-std (){
         $(safe-echo domname probname solver time mem elapsed preprocess forward usage cost length macrousage metalength forwardmacro cyclicmacro numeval numcomp)
     echo
 }
+
+
+parse-failed-cost (){
+    grep "Best solution cost so far:" $log | cut -d ' ' -f 6
+}
+
+parproblem-failed-iteration (){
+    cost=$(min $(parse-failed-cost))
+    macrousage=0
+    metalength=$length
+    forwardmacro=0
+    cyclicmacro=0
+    numeval=0
+    numcomp=0
+    forward=$(grep "Forward-macro computation" $log | cut -d " " -f 3)
+    preprocess=$(grep "Preprocessing time" $log | cut -d " " -f 3)
+    wrap echo -n \
+        $(safe-echo domname probname solver time mem elapsed preprocess forward usage cost length macrousage metalength forwardmacro cyclicmacro numeval numcomp)
+    echo
+}
