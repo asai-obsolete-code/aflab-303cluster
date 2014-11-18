@@ -254,7 +254,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun ipc ()
-  (begin "tabular" "|c|*{4}{c|cc|c||}cc|c|")
+  (begin "tabular" "|c|*{4}{c|c|c||}c|c|")
   (terpri)
   (princ
    (last-&-newline
@@ -279,7 +279,7 @@
   (end "tabular"))
 
 (defun large ()
-  (begin "tabular" "|c|*{4}{c|cc|c|c||}cc|c|c|")
+  (begin "tabular" "|c|*{4}{c|c|c|c||}c|c|c|")
   (terpri)
   (princ
    (last-&-newline
@@ -307,36 +307,36 @@
   (princ "\\\\")
   (hline)
   (end "tabular"))
-
-;; (defun appendix ()
-;;   (begin "tabular" "|c|*{4}{c|ccc|c||}ccc|c|")
-;;   (terpri)
-;;   (princ
-;;    (last-&-newline
-;;     (combine-columns
-;;      (first-column)
-;;      (base-column 'ff)
-;;      (cap-column 'ff2)
-;;      (base-column 'ff2tl)
-;;      (cost-column 'ff 'ff2)
-;;      (base-column 'fd)
-;;      (cap-column 'fd2)
-;;      (base-column 'fd2tl)
-;;      (cost-column 'fd 'fd2)
-;;      (base-column 'probe)
-;;      (cap-column 'probe2)
-;;      (base-column 'probe2tl)
-;;      (cost-column 'probe 'probe2)
-;;      (base-column 'cea)
-;;      (cap-column 'cea2)
-;;      (base-column 'cea2tl)
-;;      (cost-column 'cea 'cea2)
-;;      (cap-column 'fffd)
-;;      (base-column 'fffdtl)
-;;      (cost-column 'fd 'fffd))))
-;;   (princ "\\\\")
-;;   (hline)
-;;   (end "tabular"))
+#+nil
+(defun appendix ()
+  (begin "tabular" "|c|*{4}{c|ccc|c||}ccc|c|")
+  (terpri)
+  (princ
+   (last-&-newline
+    (combine-columns
+     (first-column)
+     (base-column 'ff)
+     (cap-column 'ff2)
+     (base-column 'ff2tl)
+     (cost-column 'ff 'ff2)
+     (base-column 'fd)
+     (cap-column 'fd2)
+     (base-column 'fd2tl)
+     (cost-column 'fd 'fd2)
+     (base-column 'probe)
+     (cap-column 'probe2)
+     (base-column 'probe2tl)
+     (cost-column 'probe 'probe2)
+     (base-column 'cea)
+     (cap-column 'cea2)
+     (base-column 'cea2tl)
+     (cost-column 'cea 'cea2)
+     (cap-column 'fffd)
+     (base-column 'fffdtl)
+     (cost-column 'fd 'fffd))))
+  (princ "\\\\")
+  (hline)
+  (end "tabular"))
 
 (defun summary (ratios)
   (if ratios
@@ -413,9 +413,10 @@
 (defun cap-column (cap)
   (combine-columns
    ;; coverage %
-   (show-coverage cap 2)
+   (show-coverage cap 1)
    ;; (length-ratio cap)
-   (preprocessing-success+failure cap)))
+   ;; (preprocessing-success+failure cap)
+   ))
 
    ;; (if full
    ;;     (preprocessing-success/failure base cap))
@@ -657,6 +658,36 @@
                                (and metalength (satisfies plusp)) _ _)
                         (collecting
                          (float (/ metalength length))))))))))))
+
+
+;;;; pp/wall
+(defun pp-wall ()
+  (begin "tabular" "|c|*{5}{c|}")
+  (terpri)
+  (princ
+   (last-&-newline
+    (combine-columns
+     (first-column)
+     (pp-wall-column 'ff2)
+     (pp-wall-column 'fd2)
+     (pp-wall-column 'probe2)
+     (pp-wall-column 'cea2)
+     (pp-wall-column 'fffd))))
+  (princ "\\\\")
+  (hline)
+  (end "tabular"))
+
+(defun pp-wall-column (solver)
+  (combine-columns
+   (with-output-to-string (*standard-output*)
+     (r*)
+     (r (rename-solver solver))
+     (r*)
+     (r*)
+     (iter (for d in (domains)) (r*))
+     (r*)
+     (r*))
+   (preprocessing-success+failure solver)))
 
 ;;; main
 
