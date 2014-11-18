@@ -227,7 +227,7 @@
 ;;; main
 
 (defvar *db*)
-(defvar % nil)
+(defvar *accumulation* :sum)
 (defvar *argv* (copy-list (cdr sb-ext:*posix-argv*)))
 (defun myprint (&aux (mode (or (pop *argv*) "ipc"))
                   (title (or (pop *argv*) mode)))
@@ -340,9 +340,15 @@
 
 (defun summary (ratios)
   (if ratios
-      (format nil "~1,1f\\spm{}~1,1f"
+      (format nil "~3,2f\\spm{}~3,2f"
               (mean ratios)
               (standard-deviation ratios))
+      "-"))
+(defun summary-int (ratios)
+  (if ratios
+      (format nil "~a\\spm{}~a"
+              (floor (mean ratios))
+              (floor (standard-deviation ratios)))
       "-"))
 
 
@@ -351,7 +357,17 @@
 (defun domains ()
   (sort (associative-array-dimension *db* 0) #'string<))
 (defun %# (count all)
-  (if % (floor (* 100 (/ count all))) count))
+  (ecase *accumulation*
+    (:percentage (floor (* 100 (/ count all))))
+    (:sum count)))
+
+(defun %#-title ()
+  (ecase *accumulation*
+    (:percentage "\\%")
+    (:sum  "\\#")))
+
+(defun %#-accumulation ()
+  (symbol-name *accumulation*))
 
 (defun first-column ()
   (with-output-to-string (*standard-output*)
@@ -364,7 +380,7 @@
                      (rename-domain d)
                      (max-problem-number d)))) ;domain
     (hline)
-    (r (if % "overall" "sum"))))
+    (r (%#-accumulation))))
 
 ;;;; coverage
 
@@ -374,7 +390,7 @@
     (multicolumn column "|c|"
                  (with-output-to-string (*standard-output*)
                    (rotatebox rotate (rename-solver solver)))) (r)
-    (r (if % "\\%" "\\#"))
+    (r (%#-title))
     (r*)
     (show-coverage/domain solver)
     (r*)
@@ -587,7 +603,7 @@
   (with-output-to-string (*standard-output*)
     (r*)
     (r*)
-    (r "{\\relsize{-1}\\spc{$l_e/l_p$\\_ave.\\spm{}sd}}")
+    (r "{\\relsize{-1}\\spc{$l_p/l_e$\\_ave.\\spm{}sd}}")
     (r*)
     (iter (for d in (sort (domains)
                           #'string<))
@@ -598,7 +614,7 @@
                                (and length (satisfies plusp)) _
                                (and metalength (satisfies plusp)) _ _)
                         (collecting
-                         (float (/ metalength length)))))))
+                         (float (/ length metalength)))))))
           (r (summary ratios)))
     (r*)
     (r (summary
@@ -610,7 +626,7 @@
                                (and length (satisfies plusp)) _
                                (and metalength (satisfies plusp)) _ _)
                         (collecting
-                         (float (/ metalength length))))))))))))
+                         (float (/ length metalength))))))))))))
 
 ;;;; search behavior
 
@@ -620,7 +636,8 @@
   (princ
    (last-&-newline
     (combine-columns
-     (first-column)
+     (let ((*accumulation* :average))
+       (first-column))
      (sb-column 'ff2)
      (sb-column 'fd2)
      (sb-column 'probe2)
@@ -634,7 +651,7 @@
   (with-output-to-string (*standard-output*)
     (r*)
     (r (rename-solver cap)) 
-    (r "{\\relsize{-1}\\spc{$l_e/l_p$\\_ave.\\spm{}sd}}")
+    (r "{\\relsize{-1}\\spc{$l_p/l_e$\\_ave.\\spm{}sd}}")
     (r*)
     (iter (for d in (sort (domains)
                           #'string<))
@@ -645,10 +662,10 @@
                                (and length (satisfies plusp)) _
                                (and metalength (satisfies plusp)) _ _)
                         (collecting
-                         (float (/ metalength length)))))))
-          (r (summary ratios)))
+                         (float (/ length metalength)))))))
+          (r (summary-int ratios)))
     (r*)
-    (r (summary
+    (r (summary-int
         (iter (for d in (domains))
               (appending
                (iter (for p in (problems))
@@ -657,7 +674,7 @@
                                (and length (satisfies plusp)) _
                                (and metalength (satisfies plusp)) _ _)
                         (collecting
-                         (float (/ metalength length))))))))))))
+                         (float (/ length metalength))))))))))))
 
 
 ;;;; pp/wall
@@ -667,7 +684,8 @@
   (princ
    (last-&-newline
     (combine-columns
-     (first-column)
+     (let ((*accumulation* :average))
+       (first-column))
      (pp-wall-column 'ff2)
      (pp-wall-column 'fd2)
      (pp-wall-column 'probe2)
