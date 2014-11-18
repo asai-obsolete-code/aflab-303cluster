@@ -228,10 +228,21 @@ getcost (){
     fi
 }
 
+metalength (){
+    # 1st: for fd,cea, 2nd: for probe, ff
+    min $(grep "Plan length:" $log | cut -d ' ' -f 3) \
+        $(grep -C 2 "Result:" $log | grep "Plan cost:" | cut -d ' ' -f 3)
+}
+
 actioncost (){
     cost=$(min $(map getcost $(ls $probname.$config.plan* 2>/dev/null )))
-    macrousage=$(grep "Decoding action" $log | wc -l )
-    metalength=$(($length - $macrousage))
+    metalength=$(metalength)
+    if [[ $metalength != "" && $length != "" ]]
+    then
+        macrousage=$(($length-$metalength))
+    else
+        macrousage=-1
+    fi
     
     forwardmacro=$(grep "macros after filtering" $log | cut -d ' ' -f 1)
     cyclicmacro=$(grep "(CYCLE" $log | wc -l)
@@ -269,13 +280,15 @@ parproblem-std (){
 
 
 parse-failed-cost (){
-    grep "Best solution cost so far:" $log | cut -d ' ' -f 6
+    grep "Plan cost:" $log | cut -d ' ' -f 3
 }
 
 parproblem-failed-iteration (){
     cost=$(min $(parse-failed-cost))
     macrousage=0
-    metalength=$length
+    length=0
+    metalength=$(metalength)
+    macrousage=0
     forwardmacro=0
     cyclicmacro=0
     numeval=0

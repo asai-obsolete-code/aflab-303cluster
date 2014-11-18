@@ -20,10 +20,15 @@ run (){
 
 dispatch (){
     case $solver in
+        ff2*) actioncost >> $sd/$solver.summary ;;
+        cea2*) actioncost >> $sd/$solver.summary ;;
+        probe2*) actioncost >> $sd/$solver.summary ;;
+        # 
         fd*) parproblem-failed-iteration >> $sd/$solver.summary ;;
         fffd*) parproblem-failed-iteration >> $sd/$solver.summary ;;
         fd2*) parproblem-failed-iteration >> $sd/$solver.summary ;;
-        *)  ;;
+        # 
+        *) parproblem-std >> $sd/$solver.summary ;;
     esac
 }
 
