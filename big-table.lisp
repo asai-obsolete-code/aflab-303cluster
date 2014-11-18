@@ -186,7 +186,9 @@
 (deftex caption (msg))
 (deftex label (label))
 
-(deftex rotatebox (degree contents))
+;; (deftex rotatebox (degree contents))
+(DEFUN ROTATEBOX (DEGREE CONTENTS)
+  (FORMAT T "~&\\~(~a~)[origin=c]~{{~a}~}~{{~a}~}" 'ROTATEBOX (LIST DEGREE CONTENTS) NIL))
 ;;; row editing
 
 (defun combine-columns (&rest strings)
