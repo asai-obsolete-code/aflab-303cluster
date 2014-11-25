@@ -1,15 +1,18 @@
 
 
-"run.sh" and "lama.sh" is a sample script for templating many qsub request.
 
-: ./qsub-template.sh -r "-P 4 -t 1800 -T 3600 -m 2000000 -M 8000000" lama.sh
+This repository contains a set of convenient maintainance scripts for
+aflab-303 clusters. Use it on funlucy.
 
-+ "run.sh" calls qsub-template.sh. In run.sh, list the template files and
-  resource iteration boundary.
-  + here, iteration boundary is specified by -r option, and lama.sh is the
-    qsub generation script.
-+ qsub-template.sh calls lama.sh iterating over pddl problem files starting
-  with "pXX" in all the subdirectories.
-+ lama.sh is actually a thin wrapper that calls shared-template.sh in turn,
-  which is the true generation script.
+Usage:
+
++ ./map [-s passwd] [-p] COMMAND... :: run COMMAND on each fun node. PWD is
+     set to the current directory, so it assumes the nfs file system is
+     already in effect.
+   + If -p is given, they run in parallel.
+   + If -s passwd is given, COMMAND is wrapped by sudo.
++ ./watch  :: watch the number of jobs running. quit with C-c
++ ./ps-all :: for each fun node, shows the top processes that are using the memory the most
++ ./qhold-all.sh [regexp] :: hold everything whose job name / user name
+     matches the regexp
 
