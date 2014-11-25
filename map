@@ -4,12 +4,14 @@
 PARALLEL=false
 SUDO=false
 SUDO_PASSWORD=
-while getopts ":p:s:" opt
+VERBOSE=true
+while getopts ":qps:" opt
 do
     case ${opt} in
         p)  PARALLEL=true ;
             echo "Invoking ssh in parallel."
             ;;
+        q)  VERBOSE=false ;;
         s)  SUDO=true ;
             SUDO_PASSWORD=${OPTARG}
             echo "Enabling sudo."
@@ -23,21 +25,30 @@ shift $(($OPTIND - 1))
 
 hosts=$(cat $(dirname $0)/hosts | sed -e "s/#.*//g")
 commands=$@
+ssh_option="-q"
 if $SUDO
 then
-    commands="echo $SUDO_PASSWORD | sudo -S -p \"\" -- \"$commands\""
+    commands="echo $SUDO_PASSWORD | sudo -S -p \"\" -- sh -c \"$commands\""
 fi
-echo "Running command: $commands"
+$VERBOSE && echo "Running command: $commands"
+$VERBOSE && ssh_option=""
+$PARALLEL && ssh_option="-t $ssh_option"
+
+run (){
+    ssh $ssh_option $host "cd $PWD; $commands"
+}
 
 for host in $hosts
 do
-    echo "logging in to $host..."
+    $VERBOSE && echo "logging in to $host..."
     if $PARALLEL
     then
-        ssh $host "cd $PWD; $commands" &
+        run &
     else
-        ssh -t $host "cd $PWD; $commands"
+        run
     fi
 done
+
+
 
 wait
