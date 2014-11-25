@@ -1,6 +1,6 @@
 # -*- comment-start : "#" -*- 
 # 
-# lines beginning with # is ignored
+# lines after # are ignored
 # funlucy
 fun000
 fun001
