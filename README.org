@@ -6,13 +6,16 @@ aflab-303 clusters. Use it on funlucy.
 
 Usage:
 
-+ ./map [-s passwd] [-p] COMMAND... :: run COMMAND on each fun node. PWD is
++ map [-s passwd] [-p] COMMAND... :: run COMMAND on each fun node. PWD is
      set to the current directory, so it assumes the nfs file system is
      already in effect.
    + If -p is given, they run in parallel.
    + If -s passwd is given, COMMAND is wrapped by sudo.
-+ ./watch  :: watch the number of jobs running. quit with C-c
-+ ./ps-all :: for each fun node, shows the top processes that are using the memory the most
-+ ./qhold-all.sh [regexp] :: hold everything whose job name / user name
-     matches the regexp
++ watch  :: watch the number of jobs running. quit with C-c
++ ps-all :: for each fun node, shows the top processes that are using the memory the most
++ qhold-all.sh [regexp] :: hold everything whose job name / user name
+   matches the regexp
++ test-connection.sh :: This script logs in to each fun node X, and then try
+     to connect to the other node Y. Thus, running this script can detect
+     the error in the connection between X and Y for all pairs (X, Y).
 
