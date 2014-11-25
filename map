@@ -2,11 +2,17 @@
 #-*- mode:sh -*-
 
 PARALLEL=false
-while getopts ":p" opt
+SUDO=false
+SUDO_PASSWORD=
+while getopts ":p:s:" opt
 do
     case ${opt} in
         p)  PARALLEL=true ;
             echo "Invoking ssh in parallel."
+            ;;
+        s)  SUDO=true ;
+            SUDO_PASSWORD=${OPTARG}
+            echo "Enabling sudo."
             ;;
         \?) OPT_ERROR=1; break;;
         * ) echo "unsupported option $opt" ;;
@@ -15,16 +21,22 @@ done
 
 shift $(($OPTIND - 1))
 
-nodes="001 002 003 004 005 007"
+hosts=$(cat $(dirname $0)/hosts | sed -e "s/#.*//g")
 commands=$@
-for node in $nodes
+if $SUDO
+then
+    commands="echo $SUDO_PASSWORD | sudo -S -p \"\" -- \"$commands\""
+fi
+echo "Running command: $commands"
+
+for host in $hosts
 do
-    echo "logging in to fun$node..."
+    echo "logging in to $host..."
     if $PARALLEL
     then
-        ssh fun$node "cd $PWD; $commands" &
+        ssh $host "cd $PWD; $commands" &
     else
-        ssh -t fun$node "cd $PWD; $commands"
+        ssh -t $host "cd $PWD; $commands"
     fi
 done
 
