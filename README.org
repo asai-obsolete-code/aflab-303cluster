@@ -6,11 +6,13 @@ aflab-303 clusters. Use it on funlucy.
 
 Usage:
 
-+ map [-s passwd] [-p] COMMAND... :: run COMMAND on each fun node. PWD is
-     set to the current directory, so it assumes the nfs file system is
-     already in effect.
++ map [-s passwd] [-p] COMMAND... :: run COMMAND on each fun node. During
+     the execution, PWD is set to the host's current directory. It assumes the
+     nfs file system is already mounted.
    + If -p is given, they run in parallel.
    + If -s passwd is given, COMMAND is wrapped by sudo.
+   + =hosts= contains a list of hostnames to be logged in by the invocation
+     of =map=. Lines after =#= are considered the comments.
 + watch  :: watch the number of jobs running. quit with C-c
 + ps-all :: for each fun node, shows the top processes that are using the memory the most
 + qhold-all.sh [regexp] :: hold everything whose job name / user name
