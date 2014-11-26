@@ -4,7 +4,6 @@
 PARALLEL=false
 SUDO=false
 SUDO_PASSWORD=
-VERBOSE=true
 while getopts ":qp-s:" opt
 do
     case ${opt} in
@@ -23,22 +22,22 @@ done
 
 shift $(($OPTIND - 1))
 
-stack=
+acc=
 
 while [[ $1 != "" && $1 != "--" ]]
 do
-    stack="$stack $1"
+    acc="$acc $1"
     shift
 done
 
 if [[ $1 == "--" ]]
 then
     shift
-    ssh_option="$stack"
+    ssh_option="$acc"
     commands=$@
 else
     ssh_option=""
-    commands="$stack"
+    commands="$acc"
 fi
 
 hosts=$(cat $(dirname $0)/hosts | sed -e "s/#.*//g")
@@ -50,11 +49,8 @@ fi
 
 $PARALLEL && ssh_option="-t $ssh_option"
 
-if $VERBOSE
-then
-    echo "Running command: $commands"
-    echo "SSH options: $ssh_option"
-fi
+echo "Running command: $commands"
+echo "SSH options: $ssh_option"
 
 run (){
     ssh $ssh_option $host "cd $PWD; $commands"
