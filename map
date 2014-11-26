@@ -51,14 +51,15 @@ $PARALLEL && ssh_option="-t $ssh_option"
 
 echo "Running command: $commands"
 echo "SSH options: $ssh_option"
+echo "Final command to run: ssh $ssh_option -- <host> \"cd $PWD; $commands\""
 
 run (){
-    ssh $ssh_option $host "cd $PWD; $commands"
+    ssh $ssh_option -- $host "cd $PWD; $commands"
 }
 
 for host in $hosts
 do
-    $VERBOSE && echo "logging in to $host..."
+    echo "logging in to $host..."
     if $PARALLEL
     then
         run &
