@@ -11,6 +11,7 @@ Usage:
      nfs file system is already mounted.
    + If -p is given, they run in parallel.
    + If -s passwd is given, COMMAND is wrapped by sudo.
+   + if =SSH_OPTIONS= are provided between =--='s, they are passed to =ssh= (8).
    + =hosts= contains a list of hostnames to be logged in by the invocation
      of =map=. Lines after =#= are considered the comments.
 + watch  :: watch the number of jobs running. quit with C-c
