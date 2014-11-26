@@ -6,7 +6,7 @@ aflab-303 clusters. Use it on funlucy.
 
 Usage:
 
-+ map [-s passwd] [-p] COMMAND... :: run COMMAND on each fun node. During
++ map [-s passwd] [-p] [-- SSH_OPTIONS] -- COMMAND... :: run COMMAND on each fun node. During
      the execution, PWD is set to the host's current directory. It assumes the
      nfs file system is already mounted.
    + If -p is given, they run in parallel.
