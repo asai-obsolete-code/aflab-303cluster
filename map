@@ -5,17 +5,17 @@ PARALLEL=false
 SUDO=false
 SUDO_PASSWORD=
 VERBOSE=true
-while getopts ":qps:" opt
+while getopts ":qp-s:" opt
 do
     case ${opt} in
         p)  PARALLEL=true ;
             echo "Invoking ssh in parallel."
             ;;
-        q)  VERBOSE=false ;;
         s)  SUDO=true ;
             SUDO_PASSWORD=${OPTARG}
             echo "Enabling sudo."
             ;;
+        -)  break ;;
         \?) OPT_ERROR=1; break;;
         * ) echo "unsupported option $opt" ;;
     esac
@@ -23,15 +23,31 @@ done
 
 shift $(($OPTIND - 1))
 
+stack=
+
+while [[ $1 != "" && $1 != "--" ]]
+do
+    stack="$stack $1"
+    shift
+done
+
+if [[ $1 == "--" ]]
+then
+    shift
+    ssh_option="$stack"
+    commands=$@
+else
+    ssh_option=""
+    commands="$stack"
+fi
+
 hosts=$(cat $(dirname $0)/hosts | sed -e "s/#.*//g")
-commands=$@
-ssh_option="-q"
+
 if $SUDO
 then
     commands="echo $SUDO_PASSWORD | sudo -S -p \"\" -- sh -c \"$commands\""
 fi
 $VERBOSE && echo "Running command: $commands"
-$VERBOSE && ssh_option=""
 $PARALLEL && ssh_option="-t $ssh_option"
 
 run (){
@@ -48,7 +64,5 @@ do
         run
     fi
 done
-
-
 
 wait
