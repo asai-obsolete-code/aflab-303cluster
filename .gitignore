@@ -12,4 +12,4 @@
 *.qsub.*
 /component-planner*
 *.summary
-*.[eo][0-9]*
+*.[eo]
