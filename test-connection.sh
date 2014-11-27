@@ -1,4 +1,4 @@
 #!/bin/bash
 
 
-./map -q "echo -n \"* \" ; hostname ; ./map -q hostname"
+./map -l -- -q -- "echo -n \"* \" ; hostname ; ./map -l -- -q -- hostname"
