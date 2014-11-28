@@ -10,7 +10,8 @@ Usage:
      the execution, PWD is set to the host's current directory. It assumes the
      nfs file system is already mounted.
    + If -p is given, they run in parallel.
-   + If -l is given, add funlucy into the mapped hosts.
+   + If -l|--funlucy is given, add funlucy into the mapped hosts.
+   + If --profile is given, profile the command with bash =time=.
    + If -s passwd is given, COMMAND is wrapped by sudo.
    + if =SSH_OPTIONS= are provided between =--='s, they are passed to =ssh= (8).
    + =hosts= contains a list of hostnames to be logged in by =map=.
