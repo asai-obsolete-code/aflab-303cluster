@@ -1,3 +1,5 @@
 #! /bin/bash
 
-watch -n 10 ./map ./ps-per-node.sh
+user=$1
+
+watch -n 10 ./map ./ps-per-node.sh $user
