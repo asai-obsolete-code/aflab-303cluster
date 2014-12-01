@@ -35,8 +35,7 @@ do
             esac ;;
         -*) echo "unsupported short option $opt"
             exit 1 ;;
-        * ) shift
-            break ;;
+        * ) break ;;
     esac
     shift
 done
