@@ -9,12 +9,28 @@ SUDO_PASSWORD=
 LUCY=false
 PROFILE=false
 
+if [[ -f ./hosts ]]
+then
+    echo Found a local hosts file
+    HOSTSFILE=./hosts
+elif [[ -f $(dirname $0)/hosts ]]
+then
+    echo Found a script-local hosts file
+    HOSTSFILE=$(dirname $0)/hosts
+else
+    echo Using the defauilt hosts file
+    HOSTSFILE=$(dirname $(readlink -ef $0))/hosts
+fi
+
 while [[ $* != "" ]]
 do
     opt=$1
     case $opt in
         -p) PARALLEL=true
             echo "Invoking ssh in parallel." ;;
+        -h) HOSTSFILE=$2
+            shift 2
+            echo "Using alternative hosts file $HOSTSFILE." ;;
         -s) SUDO=true
             SUDO_PASSWORD=$2
             shift 2
@@ -58,7 +74,7 @@ else
     commands="$acc"
 fi
 
-hosts=$(cat $(dirname $0)/hosts | sed -e "s/#.*//g")
+hosts=$(cat $HOSTSFILE | sed -e "s/#.*//g")
 
 $LUCY && hosts="funlucy $hosts"
 $SUDO && commands="echo $SUDO_PASSWORD | sudo -S -p \"\" -- sh -c \"$commands\""
