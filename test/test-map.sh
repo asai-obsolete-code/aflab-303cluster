@@ -17,3 +17,7 @@ echodo ../map --lucy -- ls -la
 
 # ssh option
 echodo ../map --lucy -- -V -- ls -la
+
+# sudo
+read -p "enter sudo pass: " passwd
+echodo ../map -s $passwd -- ls -la
