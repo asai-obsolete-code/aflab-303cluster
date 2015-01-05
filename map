@@ -16,8 +16,8 @@ do
         -p) PARALLEL=true
             echo "Invoking ssh in parallel." ;;
         -s) SUDO=true
-            SUDO_PASSWORD=$1
-            shift
+            SUDO_PASSWORD=$2
+            shift 2
             echo "Enabling sudo." ;;
         -l) LUCY=true
             echo "Added funlucy to the mapped hosts." ;;
