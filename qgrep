@@ -1,0 +1,4 @@
+#!/bin/bash
+
+qstat -a | tail -n +6 | grep $@ | cut -d. -f 1
+

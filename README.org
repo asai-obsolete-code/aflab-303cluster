@@ -17,10 +17,12 @@ Usage:
    + =hosts= contains a list of hostnames to be logged in by =map=.
      Lines after =#= are treated as comments.
 + watch  :: watch the number of jobs running. quit with C-c
++ qgrep  :: grep from =qstat -a= results, then return the job id. Useful
+            in combination with =qgrep XXX | xargs qdel/qrls/qhold=
 + ps-all :: for each fun node, shows the several processes that are using the
             largest amount of memory
-+ qhold-all.sh [regexp] :: hold all jobs whose job names / user names
-     match the regexp
++ qhold-all :: hold all jobs whose job names / user names
+               match the regexp
 + test-connection.sh :: This script logs in to each fun node X, and then try
      to connect to the other node Y. Thus, running this script can detect
      the error in the connection between X and Y for all pairs (X, Y).
