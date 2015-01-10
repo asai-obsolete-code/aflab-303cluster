@@ -1,6 +1,0 @@
-#!/bin/bash
-#-*- mode:sh -*-
-
-git clean -Xf -e component-planner
-
-./setup.sh

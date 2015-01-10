@@ -26,4 +26,5 @@ Usage:
 + test-connection.sh :: This script logs in to each fun node X, and then try
      to connect to the other node Y. Thus, running this script can detect
      the error in the connection between X and Y for all pairs (X, Y).
++ install.sh :: make symlinks to the scripts in the current directory.
 

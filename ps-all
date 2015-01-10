@@ -1,3 +1,3 @@
 #! /bin/bash
 
-watch -n 10 ./map ./ps-per-node.sh
+watch -n 10 ./map $(dirname $(readlink -ef $0))/util/ps-per-node.sh
