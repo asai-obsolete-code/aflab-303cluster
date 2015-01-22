@@ -19,9 +19,9 @@ echo "              jobs       mem"
 
 for h in $hosts
 do
-    jobs=$((1+$(pbsnodes $h | grep "jobs = " | tr -cd , | wc -c)))
+    jobs=$(pbsnodes $h | grep "jobs = " | tr -cd , | wc -c)
     state=$(pbsnodes $h | awk '/state/{print $3; exit 0}')
-    echo "$h($state): $(printdots $jobs 8) $(ssh $h free -h | awk '/-\/\+/{printf("%s/%s",$3,$4)}')"
+    echo "$h($state): |$(printdots $jobs 8) $(ssh $h free -h | awk '/-\/\+/{printf("%s/%s",$3,$4)}')"
 done
 
 echo ----------------------------------------------------------------------------------
