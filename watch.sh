@@ -1,3 +1,3 @@
 #!/bin/bash
 
-watch -d -t $(dirname $(readlink -ef $0))/util/status.sh
+watch -d -t $(dirname $(readlink -ef $0))/status.sh
