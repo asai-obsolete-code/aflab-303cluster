@@ -22,7 +22,7 @@ withwidth (){
     done
 }
 
-withwidth 20 ""
+withwidth 30 ""
 withwidth 11 "jobs"
 withwidth 12 "mem"
 echo
@@ -31,13 +31,14 @@ for h in $hosts
 do
     jobs=$(pbsnodes $h | grep "jobs = " | tr -cd / | wc -c)
     state=$(pbsnodes $h | awk '/state/{print $3; exit 0}')
-    withwidth 20 "$h($state):"
+    withwidth 30 "$h($state):"
     echo -n "["
     withwidth 8 "$(printdots $jobs 8)"
     echo -n "] "
-    withwidth 12 $(ssh $h free -h | awk '/-\/\+/{printf("%s/%s",$3,$4)}')
+    freetext=$(ssh $h free -h | awk '/-\/\+/{printf("used: %s free: %s",$3,$4)}')
+    withwidth 25 "$freetext"
     echo
 done
-
+qstat -q | awk '/batch/{printf("Running: %s Pending: %s\n",$6,$7)}'
 qstat -a | tail -n +3 | head -n 3
 qstat -a | awk '/.*batch.*/{if (match(/R/,$10)) ; { print $0 }}'

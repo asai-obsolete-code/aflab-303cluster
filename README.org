@@ -16,7 +16,7 @@ Usage:
    + if =SSH_OPTIONS= are provided between =--='s, they are passed to =ssh= (8).
    + =hosts= contains a list of hostnames to be logged in by =map=.
      Lines after =#= are treated as comments.
-+ watch  :: watch the number of jobs running. quit with C-c
++ watch.sh  :: watch the number of jobs running. quit with C-c
 + qgrep  :: grep from =qstat -a= results, then return the job id. Useful
             in combination with =qgrep XXX | xargs qdel/qrls/qhold=
 + ps-all :: for each fun node, shows the several processes that are using the
@@ -28,3 +28,39 @@ Usage:
      the error in the connection between X and Y for all pairs (X, Y).
 + install.sh :: make symlinks to the scripts in the current directory.
 
+* =watch.sh= Example Output:
+
+#+BEGIN_SRC lisp
+
+Found a script-local hosts file
+                              jobs       mem
+fun000(job-exclusive):        [########] used: 4.0G free: 11G 
+fun001(job-exclusive):        [########] used: 5.7G free: 9.9G
+fun002(job-exclusive):        [########] used: 6.6G free: 9.1G
+fun003(job-exclusive):        [########] used: 6.9G free: 8.8G
+fun004(job-exclusive):        [########] used: 3.5G free: 12G 
+fun005(job-exclusive):        [########] used: 6.2G free: 9.5G
+Running: 48 Pending: 9239 
+
+Job ID               Username Queue    Jobname          SessID NDS   TSK Memory Time  S Time
+-------------------- -------- -------- ---------------- ------ ----- --- ------ ----- - -----
+310253.localhost     asai     batch    asse15.ff          5997     1   1 220000 00:32 R 00:30
+310255.localhost     asai     batch    asse17.ff          1384     1   1 220000 00:32 R 00:30
+310256.localhost     asai     batch    asse05.ff         28848     1   1 220000 00:32 R 00:29
+310257.localhost     asai     batch    asse18.ff         31174     1   1 220000 00:32 R 00:29
+310259.localhost     asai     batch    asse20.ff         11368     1   1 220000 00:32 R 00:28
+310261.localhost     asai     batch    tran58.ff          8142     1   1 220000 00:32 R 00:28
+310263.localhost     asai     batch    tran14.ff         14801     1   1 220000 00:32 R 00:27
+310264.localhost     asai     batch    tran52.ff          8798     1   1 220000 00:32 R 00:24
+310265.localhost     asai     batch    tran25.ff          9393     1   1 220000 00:32 R 00:24
+310266.localhost     asai     batch    tran55.ff          2271     1   1 220000 00:32 R 00:24
+310268.localhost     asai     batch    tran11.ff         12047     1   1 220000 00:32 R 00:23
+310269.localhost     asai     batch    tran28.ff         12178     1   1 220000 00:32 R 00:24
+310272.localhost     asai     batch    tran17.ff         20707     1   1 220000 00:32 R 00:23
+310274.localhost     asai     batch    tran22.ff         13892     1   1 220000 00:32 R 00:23
+310280.localhost     asai     batch    open19.ff         10838     1   1 220000 00:32 R 00:22
+310293.localhost     asai     batch    open21.ff         11155     1   1 220000 00:32 R 00:17
+310294.localhost     asai     batch    open15.ff         26436     1   1 220000 00:32 R 00:15
+
+
+#+END_SRC
