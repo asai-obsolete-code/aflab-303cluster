@@ -1,4 +1,4 @@
 #!/bin/bash
 
 query=${1:-".*"}
-./qgrep batch | xargs qhold
+$(dirname $(readlink -ef $0))/qgrep batch | xargs qhold
