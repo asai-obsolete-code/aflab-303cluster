@@ -1,4 +1,6 @@
 #!/bin/bash
 
-qstat -a | tail -n +6 | grep $@ | cut -d. -f 1
+args=${*:-'.'}
+
+qstat -a | tail -n +6 | grep $args | cut -d. -f 1
 
