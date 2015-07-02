@@ -1,6 +1,9 @@
 #!/bin/bash
 
-. ../utilities.sh
+echodo (){
+    echo "$@"
+    $@
+}
 
 echodo ../map ls
 
