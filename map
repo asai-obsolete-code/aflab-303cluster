@@ -23,6 +23,10 @@ do
             echo "Using alternative hosts file $HOSTSFILE." ;;
         -s) SUDO=true
             SUDO_PASSWORD=$2
+            if [[ $SUDO_PASSWORD == "-" ]]
+            then
+                read -p "Enter sudo authentication password for user $USER: " SUDO_PASSWORD
+            fi
             shift
             echo "Enabling sudo." ;;
         -l) LUCY=true
