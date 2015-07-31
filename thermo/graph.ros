@@ -6,7 +6,8 @@ exec ros -Q -- $0 "$@"
 
 (ql:quickload
 '(:eazy-gnuplot :trivia :trivia.ppcre
-  :iterate :alexandria :local-time))
+  :iterate :alexandria :local-time)
+ :silent t)
 (defpackage graph
   (:use :cl :eazy-gnuplot :trivia :trivia.ppcre
         :iterate :alexandria :local-time))
