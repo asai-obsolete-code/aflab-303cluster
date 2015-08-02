@@ -25,6 +25,10 @@ exec ros -Q -- $0 "$@"
   (match line
     ((list* _ (symbol (name (ppcre ".*CORE.*"))) _) t)))
 
+(defun jobs-line-p (line)
+  (match line
+    ((list* _ 'jobs _) t)))
+
 (defun node= (a b)
   (match* (a b)
     (((list* node _)
@@ -57,7 +61,7 @@ exec ros -Q -- $0 "$@"
                   fun004 fun005 fun006 fun007
                   fun008 fun009 funlucy))
 
-(defun draw-line (s bucket)
+(defun draw-temp (s bucket)
   (match (first bucket)
     ((list* node _)
      (flet ((data ()
@@ -77,8 +81,24 @@ exec ros -Q -- $0 "$@"
              ;; :notitle '()
              ;; :smooth :csplines
              :smooth :bezier
+             :axes :x1y1
              :with :lines
              :lw 2)))))
+
+(defun draw-jobs (s bucket)
+  (flet ((data ()
+           (iter (for line in bucket)
+                 (ematch line
+                   ((list 'funlucy 'jobs 'torque _ time jobs)
+                    (format s "~&~a ~a" time jobs))))))
+    (plot #'data
+          :using '(1 2)
+          :title "Jobs remaining"
+          ;; :smooth :csplines
+          :smooth :bezier
+          :axes :x1y2
+          :with :lines
+          :lw 2)))
 
 (defun read-many (line-string)
   (with-input-from-string (s line-string)
@@ -95,7 +115,7 @@ exec ros -Q -- $0 "$@"
                            ;;   (it it))
                            ;; :size :|1200,800|
                            :enhanced
-                           ;; :monochrome :dashed
+                           ;; :monochrome
                            :background :rgb "gray75"
                            :font "Times New Roman, 10")
               :title "Temparature Logs in Room 313 (CPU Core Temp)"
@@ -104,13 +124,17 @@ exec ros -Q -- $0 "$@"
                      :horizontal
                      :maxrows 20
                      :maxcols 1
-                     ) 
+                     )
+              :autoscale :y2
               :style '(:fill :transparent :solid 0.5)
               :yrange :|[:110]|
               :xdata :time
               :timefmt "%s"
               :format '(:x "%Y/%m/%d\\n%H:%M")
               :ylabel "Core Temparature (deg.)"
+              :ytics :nomirror
+              :y2label "Queued Jobs"
+              :y2tics '()
               :grid :xy
               :xrange (make-keyword
                        (format nil "[\"~a\":\"~a\"]"
@@ -121,9 +145,12 @@ exec ros -Q -- $0 "$@"
               :pointsize "0.2px")
     (func-plot "88" :title "Danger Line\\n(Shutdown Required)")
     (func-plot "100" :title "Critical Line\\n(Forced Shutdown)")
-    (mapc (curry #'draw-line s)
+    (mapc (curry #'draw-temp s)
           (group-by #'node=
                     ;; (conjoin #'node= #'core= #'adapter=)
                     (remove-if-not #'core-line-p
-                                   (mapcar #'read-many (read-lines input)))))))
+                                   (mapcar #'read-many (read-lines input)))))
+    (draw-jobs s
+               (remove-if-not #'jobs-line-p
+                              (mapcar #'read-many (read-lines input))))))
 
