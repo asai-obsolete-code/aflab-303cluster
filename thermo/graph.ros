@@ -90,23 +90,22 @@ exec ros -Q -- $0 "$@"
              :lw 2)))))
 
 (defun draw-jobs (s bucket)
-  (flet ((data ()
-           (iter (for line in bucket)
-                 (ematch line
-                   ((list 'funlucy 'jobs 'torque _ time jobs)
-                    (format s "~&~a ~a"
-                            (timestamp-to-unix
-                             (timestamp+
-                              (unix-to-timestamp time) 9 :hour))
-                            jobs))))))
-    (plot #'data
-          :using '(1 2)
-          :title "Jobs remaining"
-          ;; :smooth :csplines
-          :smooth :bezier
-          :axes :x1y2
-          :with :lines
-          :lw 2)))
+  (plot (lambda ()
+          (iter (for line in bucket)
+                (ematch line
+                  ((list 'funlucy 'jobs 'torque _ time jobs)
+                   (format s "~&~a ~a"
+                           (timestamp-to-unix
+                            (timestamp+
+                             (unix-to-timestamp time) 9 :hour))
+                           jobs)))))
+        :using '(1 2)
+        :title "Jobs remaining"
+        ;; :smooth :csplines
+        :smooth :bezier
+        :axes :x1y2
+        :with :lines
+        :lw 2))
 
 (defun read-many (line-string)
   (with-input-from-string (s line-string)
