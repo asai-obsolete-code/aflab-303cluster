@@ -70,7 +70,11 @@ exec ros -Q -- $0 "$@"
                            ((list _ core adap _ time temp _ _)
                             (when (and (zerop (position core *cores*))
                                        (zerop (position adap *adapters*)))
-                              (format s "~&~a ~a" time temp)))))))
+                              (format s "~&~a ~a"
+                                      (timestamp-to-unix
+                                       (timestamp+
+                                        (unix-to-timestamp time) 9 :hour))
+                                      temp)))))))
        ;; (plot #'data
        ;;       :using '(1 2)
        ;;       :title (princ-to-string node)
@@ -90,7 +94,11 @@ exec ros -Q -- $0 "$@"
            (iter (for line in bucket)
                  (ematch line
                    ((list 'funlucy 'jobs 'torque _ time jobs)
-                    (format s "~&~a ~a" time jobs))))))
+                    (format s "~&~a ~a"
+                            (timestamp-to-unix
+                             (timestamp+
+                              (unix-to-timestamp time) 9 :hour))
+                            jobs))))))
     (plot #'data
           :using '(1 2)
           :title "Jobs remaining"
@@ -137,10 +145,11 @@ exec ros -Q -- $0 "$@"
               :y2tics '()
               :grid :xy
               :xrange (make-keyword
-                       (format nil "[\"~a\":\"~a\"]"
-                               (timestamp-to-unix
-                                (timestamp- (now) 1 :day))
-                               (timestamp-to-unix (now))))
+                       (let ((now (timestamp+ (now) 9.5 :hour)))
+                         (format nil "[\"~a\":\"~a\"]"
+                                 (timestamp-to-unix
+                                  (timestamp- now 1 :day))
+                                 (timestamp-to-unix now))))
               :output output
               :pointsize "0.2px")
     (func-plot "88" :title "Danger Line\\n(Shutdown Required)")
