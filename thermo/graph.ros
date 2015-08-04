@@ -144,7 +144,7 @@ exec ros -Q -- $0 "$@"
               :y2tics '()
               :grid :xy
               :xrange (make-keyword
-                       (let ((now (timestamp+ (now) 9.5 :hour)))
+                       (let ((now (timestamp+ (now) 19/2 :hour)))
                          (format nil "[\"~a\":\"~a\"]"
                                  (timestamp-to-unix
                                   (timestamp- now 1 :day))
