@@ -149,7 +149,7 @@ exec ros -Q -- $0 "$@"
               :output (make-pathname :name (format nil "~a-~ahrs"
                                                    (pathname-name output)
                                                    duration)
-                                     :default output)
+                                     :defaults output)
               :pointsize "0.2px")
     (func-plot "88" :title "Danger Line\\n(Shutdown Required)")
     (func-plot "100" :title "Critical Line\\n(Forced Shutdown)")
