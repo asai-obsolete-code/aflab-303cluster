@@ -111,8 +111,7 @@ exec ros -Q -- $0 "$@"
           (while it)
           (collect it))))
 
-(defun main (input output &rest argv)
-  (declare (ignorable argv))
+(defun make-pdf (input output)
   (with-plots (s :debug t)
     (gp-setup :terminal `(,(pathname-type output)
                            ;; (match (pathname-type output)
@@ -159,4 +158,8 @@ exec ros -Q -- $0 "$@"
     (draw-jobs s
                (remove-if-not #'jobs-line-p
                               (mapcar #'read-many (read-lines input))))))
+
+(defun main (input output &rest argv)
+  (declare (ignorable argv))
+  (make-pdf input output))
 
