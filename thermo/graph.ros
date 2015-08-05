@@ -111,7 +111,7 @@ exec ros -Q -- $0 "$@"
           (while it)
           (collect it))))
 
-(defun make-pdf (input output)
+(defun make-pdf (input output offset duration)
   (with-plots (s :debug t)
     (gp-setup :terminal `(,(pathname-type output)
                            ;; (match (pathname-type output)
@@ -141,12 +141,15 @@ exec ros -Q -- $0 "$@"
               :y2tics '()
               :grid :xy
               :xrange (make-keyword
-                       (let ((now (timestamp+ (now) 19/2 :hour)))
+                       (let ((now (timestamp+ (now) (+ 9 offset) :hour)))
                          (format nil "[\"~a\":\"~a\"]"
                                  (timestamp-to-unix
-                                  (timestamp- now 1 :day))
+                                  (timestamp- now duration :hour))
                                  (timestamp-to-unix now))))
-              :output output
+              :output (make-pathname :name (format nil "~a-~ahrs"
+                                                   (pathname-name output)
+                                                   duration)
+                                     :default output)
               :pointsize "0.2px")
     (func-plot "88" :title "Danger Line\\n(Shutdown Required)")
     (func-plot "100" :title "Critical Line\\n(Forced Shutdown)")
@@ -161,5 +164,7 @@ exec ros -Q -- $0 "$@"
 
 (defun main (input output &rest argv)
   (declare (ignorable argv))
-  (make-pdf input output))
+  (make-pdf input output 1/2 24)
+  (make-pdf input output 1/2 (* 24 3))
+  (make-pdf input output 1/2 (* 24 7)))
 
