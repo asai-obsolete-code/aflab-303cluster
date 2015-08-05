@@ -92,7 +92,7 @@ exec ros -Q -- $0 "$@"
 (defun draw-jobs (s bucket)
   (plot (lambda ()
           (iter (for line in bucket)
-                (ematch line
+                (match line
                   ((list 'funlucy 'jobs 'torque _ time jobs)
                    (format s "~&~a ~a"
                            (timestamp-to-unix
