@@ -68,13 +68,11 @@ exec ros -Q -- $0 "$@"
               (iter (for line in bucket)
                     (match line
                            ((list _ core adap _ time temp _ _)
-                            (when (and (zerop (position core *cores*))
-                                       (zerop (position adap *adapters*)))
-                              (format s "~&~a ~a"
-                                      (timestamp-to-unix
-                                       (timestamp+
-                                        (unix-to-timestamp time) 9 :hour))
-                                      temp)))))))
+                            (format s "~&~a ~a"
+                                    (timestamp-to-unix
+                                     (timestamp+
+                                      (unix-to-timestamp time) 9 :hour))
+                                    temp))))))
        ;; (plot #'data
        ;;       :using '(1 2)
        ;;       :title (princ-to-string node)
@@ -84,7 +82,7 @@ exec ros -Q -- $0 "$@"
              :title (princ-to-string node)
              ;; :notitle '()
              ;; :smooth :csplines
-             :smooth :bezier
+             :smooth :sbezier
              :axes :x1y1
              :with :lines
              :lw 2)))))
