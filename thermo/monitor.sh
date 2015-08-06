@@ -8,5 +8,5 @@ cd $d
 $SCRDIR/thermo/log-temparatures.sh
 sleep 5
 $SCRDIR/thermo/graph.ros "./*.log" funcluster-latest.pdf
-cp funcluster-latest.pdf funcluster-$(date +%m-%d).pdf
 
+cp funcluster-latest-24hrs.pdf funcluster-$(date +%m-%d).pdf
