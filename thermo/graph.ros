@@ -19,7 +19,7 @@ exec ros -Q -- $0 "$@"
          (with-open-file (s path)
            (do ((line (read-line s nil nil) (read-line s nil nil))
                 (acc nil (cons line acc)))
-               ((null line) acc))))))
+               ((null line) (nreverse acc)))))))
 
 (defun core-line-p (line)
   (match line
