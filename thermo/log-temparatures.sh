@@ -12,4 +12,17 @@ getjobs(){
 
 echo "funlucy jobs torque \"$(date -R)\" $(date +%s) $(getjobs)" >> funlucy.log
 
+cut_log (){
+    if [[ $(wc -l < $1) -gt 10600 ]]
+    then
+        head -n -9600 $1 > ${1%%-latest.log}-$(date --date "last week" +%m-%d).log
+        tail -n 9600 $1 > $1.tmp
+        rm $1
+        mv $1.tmp $1
+    fi
+}
 
+for log in *-latest.log
+do
+    cut_log $log
+done
