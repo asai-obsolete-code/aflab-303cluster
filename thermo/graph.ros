@@ -94,7 +94,7 @@ exec ros -Q -- $0 "$@"
                                       (timestamp+
                                        (unix-to-timestamp time2) 9 :hour))
                                      temp
-                                     (- time3 time1))))
+                                     (float (/ (- time3 time1) 1800)))))
                     (finally
                      (match line
                             ((list* _ _ _ _ time3 temp _)
@@ -141,7 +141,7 @@ exec ros -Q -- $0 "$@"
                             (timestamp+
                              (unix-to-timestamp time2) 9 :hour))
                            jobs
-                           (- time3 time1))))
+                           (float (/ (- time3 time1) 1800)))))
                 (finally
                  (match line
                         ((list 'funlucy 'jobs 'torque _ time3 jobs)
