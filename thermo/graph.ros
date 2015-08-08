@@ -65,24 +65,55 @@ exec ros -Q -- $0 "$@"
   (match (first bucket)
     ((list* node _)
      (flet ((data ()
+              ;; (iter (for line in bucket)
+              ;;       (match line
+              ;;              ((list _ core adap _ time temp _ _)
+              ;;               (format s "~&~a ~a"
+              ;;                       (timestamp-to-unix
+              ;;                        (timestamp+
+              ;;                         (unix-to-timestamp time) 9 :hour))
+              ;;                       temp))))
               (iter (for line in bucket)
+                    (for pline previous line)
+                    (for ppline previous pline)
+                    (match* (ppline pline line)
+                            ((nil
+                              (list* _ _ _ _ time2 temp _)
+                              _)
+                             (format s "~&~a ~a ~a"
+                                     (timestamp-to-unix
+                                      (timestamp+
+                                       (unix-to-timestamp time2) 9 :hour))
+                                     temp
+                                     MOST-POSITIVE-FIXNUM))
+                            (((list* _ _ _ _ time1 _)
+                              (list* _ _ _ _ time2 temp _)
+                              (list* _ _ _ _ time3 _))
+                             (format s "~&~a ~a ~a"
+                                     (timestamp-to-unix
+                                      (timestamp+
+                                       (unix-to-timestamp time2) 9 :hour))
+                                     temp
+                                     (- time3 time1))))
+                    (finally
                     (match line
-                           ((list _ core adap _ time temp _ _)
-                            (format s "~&~a ~a"
+                            ((list* _ _ _ _ time3 temp _)
+                             (format s "~&~a ~a ~a"
                                     (timestamp-to-unix
                                      (timestamp+
-                                      (unix-to-timestamp time) 9 :hour))
-                                    temp))))))
+                                       (unix-to-timestamp time3) 9 :hour))
+                                     temp
+                                     MOST-POSITIVE-FIXNUM)))))))
        ;; (plot #'data
        ;;       :using '(1 2)
        ;;       :title (princ-to-string node)
        ;;       :with :points)
        (plot #'data
-             :using '(1 2)
+             ;; :using '(1 2)
              :title (princ-to-string node)
              ;; :notitle '()
-             ;; :smooth :csplines
-             :smooth :sbezier
+             :smooth :csplines
+             ;; :smooth :sbezier
              :axes :x1y1
              :with :lines
              :lw 2)))))
@@ -90,17 +121,60 @@ exec ros -Q -- $0 "$@"
 (defun draw-jobs (s bucket)
   (plot (lambda ()
           (iter (for line in bucket)
-                (match line
-                  ((list 'funlucy 'jobs 'torque _ time jobs)
-                   (format s "~&~a ~a"
+                (for pline previous line)
+                (for ppline previous pline)
+                (match* (ppline pline line)
+                  ((nil
+                    (list 'funlucy 'jobs 'torque _ time2 jobs)
+                    _)
+                   (format s "~&~a ~a ~a"
                            (timestamp-to-unix
                             (timestamp+
-                             (unix-to-timestamp time) 9 :hour))
-                           jobs)))))
-        :using '(1 2)
+                             (unix-to-timestamp time2) 9 :hour))
+                           jobs
+                           MOST-POSITIVE-FIXNUM))
+                  (((list 'funlucy 'jobs 'torque _ time1 _)
+                    (list 'funlucy 'jobs 'torque _ time2 jobs)
+                    (list 'funlucy 'jobs 'torque _ time3 _))
+                   (format s "~&~a ~a ~a"
+                           (timestamp-to-unix
+                            (timestamp+
+                             (unix-to-timestamp time2) 9 :hour))
+                           jobs
+                           (- time3 time1))))
+                (finally
+                (match line
+                        ((list 'funlucy 'jobs 'torque _ time3 jobs)
+                         (format s "~&~a ~a ~a"
+                           (timestamp-to-unix
+                            (timestamp+
+                                   (unix-to-timestamp time3) 9 :hour))
+                                 jobs
+                                 MOST-POSITIVE-FIXNUM))))))
+        ;; (lambda ()
+        ;;   (iter (for line in bucket)
+        ;;         (for pline previous line)
+        ;;         (for ppline previous pline)
+        ;;         (match* (ppline pline line)
+        ;;           (((list 'funlucy 'jobs 'torque _ time1 _)
+        ;;             (list 'funlucy 'jobs 'torque _ time2 jobs2)
+        ;;             (list 'funlucy 'jobs 'torque _ time3 _))
+        ;;            (format s "~&~a ~a ~a"
+        ;;                    (timestamp-to-unix
+        ;;                     (timestamp+
+        ;;                      (unix-to-timestamp time2) 9 :hour))
+        ;;                    jobs2
+        ;;                    (- time3 time1))
+        ;;            (when (> (- time3 time2) 900) ;; 15 min
+        ;;              (format s "~&~a 1/0 ~a"
+        ;;                      (timestamp-to-unix
+        ;;                       (timestamp+
+        ;;                        (unix-to-timestamp time2) 9 :hour))
+        ;;                      (- time3 time1)))))))
+        ;; :using '(1 2)
         :title "Jobs remaining"
         ;; :smooth :csplines
-        :smooth :bezier
+        ;; :smooth :sbezier
         :axes :x1y2
         :with :lines
         :lw 2))
