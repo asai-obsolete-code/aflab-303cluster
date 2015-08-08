@@ -19,7 +19,7 @@ exec ros -Q -- $0 "$@"
          (with-open-file (s path)
            (do ((line (read-line s nil nil) (read-line s nil nil))
                 (acc nil (cons line acc)))
-               ((null line) (nreverse acc)))))))
+               ((null line) acc))))))
 
 (defun core-line-p (line)
   (match line
@@ -73,7 +73,7 @@ exec ros -Q -- $0 "$@"
               ;;                        (timestamp+
               ;;                         (unix-to-timestamp time) 9 :hour))
               ;;                       temp))))
-              (iter (for line in bucket)
+              (iter (for line in (sort bucket #'< :key #'fifth))
                     (for pline previous line)
                     (for ppline previous pline)
                     (match* (ppline pline line)
@@ -96,11 +96,11 @@ exec ros -Q -- $0 "$@"
                                      temp
                                      (- time3 time1))))
                     (finally
-                    (match line
+                     (match line
                             ((list* _ _ _ _ time3 temp _)
                              (format s "~&~a ~a ~a"
-                                    (timestamp-to-unix
-                                     (timestamp+
+                                     (timestamp-to-unix
+                                      (timestamp+
                                        (unix-to-timestamp time3) 9 :hour))
                                      temp
                                      MOST-POSITIVE-FIXNUM)))))))
@@ -120,7 +120,7 @@ exec ros -Q -- $0 "$@"
 
 (defun draw-jobs (s bucket)
   (plot (lambda ()
-          (iter (for line in bucket)
+          (iter (for line in (sort bucket #'< :key #'fifth))
                 (for pline previous line)
                 (for ppline previous pline)
                 (match* (ppline pline line)
@@ -143,11 +143,11 @@ exec ros -Q -- $0 "$@"
                            jobs
                            (- time3 time1))))
                 (finally
-                (match line
+                 (match line
                         ((list 'funlucy 'jobs 'torque _ time3 jobs)
                          (format s "~&~a ~a ~a"
-                           (timestamp-to-unix
-                            (timestamp+
+                                 (timestamp-to-unix
+                                  (timestamp+
                                    (unix-to-timestamp time3) 9 :hour))
                                  jobs
                                  MOST-POSITIVE-FIXNUM))))))
