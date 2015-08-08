@@ -10,7 +10,7 @@ getjobs(){
     qstat -B -f | grep total_jobs | awk '{print $3}'
 }
 
-echo "funlucy jobs torque \"$(date -R)\" $(date +%s) $(getjobs)" >> funlucy.log
+echo "funlucy jobs torque \"$(date -R)\" $(date +%s) $(getjobs)" >> funlucy-latest.log
 
 cut_log (){
     if [[ $(wc -l < $1) -gt 10600 ]]
