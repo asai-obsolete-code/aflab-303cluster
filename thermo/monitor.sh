@@ -7,7 +7,6 @@ mkdir -p $d
 cd $d
 $SCRDIR/thermo/log-temparatures.sh
 sleep 2
-$SCRDIR/thermo/graph.ros "./*-latest.log" funcluster-latest.pdf
-
+$SCRDIR/thermo/graph.ros
 cp funcluster-latest-24hrs.pdf funcluster-$(date +%m-%d).pdf
 chown asai:asai ./*

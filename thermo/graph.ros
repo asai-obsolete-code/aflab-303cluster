@@ -200,11 +200,11 @@ exec ros -Q -- $0 "$@"
                (remove-if-not #'jobs-line-p
                               (mapcar #'read-many (read-lines input))))))
 
-(defun main (input output &rest argv)
+(defun main (&rest argv)
   (declare (ignorable argv))
-  (make-pdf input output 1/2 24)
-  (make-pdf input output 1/2 (* 24 3))
-  (make-pdf input output 1/2 (* 24 7))
-  (make-pdf input output 1/2 (* 24 31))
-  (make-pdf input output 1/2 (* 24 31 12)))
+  (make-pdf "./*-latest.log" "funcluster-latest.pdf" 1/2 24)
+  (make-pdf "./*-latest.log" "funcluster-latest.pdf" 1/2 (* 24 3))
+  (make-pdf "./*-latest.log" "funcluster-latest.pdf" 1/2 (* 24 7))
+  (make-pdf "./*.log" "funcluster-latest.pdf" 1/2 (* 24 31))
+  (make-pdf "./*.log" "funcluster-latest.pdf" 1/2 (* 24 31 12)))
 
