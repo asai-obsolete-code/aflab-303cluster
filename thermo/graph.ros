@@ -4,6 +4,7 @@
 exec ros -Q -- $0 "$@"
 |#
 
+;;; start
 (ql:quickload
 '(:eazy-gnuplot :trivia :trivia.ppcre
   :iterate :alexandria :local-time)
@@ -19,7 +20,7 @@ exec ros -Q -- $0 "$@"
          (with-open-file (s path)
            (do ((line (read-line s nil nil) (read-line s nil nil))
                 (acc nil (cons line acc)))
-               ((null line) acc))))))
+               ((null line) (nreverse acc)))))))
 
 (defun core-line-p (line)
   (match line
@@ -65,22 +66,16 @@ exec ros -Q -- $0 "$@"
   (match (first bucket)
     ((list* node _)
      (flet ((data ()
-              ;; (iter (for line in bucket)
-              ;;       (match line
-              ;;              ((list _ core adap _ time temp _ _)
-              ;;               (format s "~&~a ~a"
-              ;;                       (timestamp-to-unix
-              ;;                        (timestamp+
-              ;;                         (unix-to-timestamp time) 9 :hour))
-              ;;                       temp))))
-              (iter (for line in (sort bucket #'< :key #'fifth))
+              (iter (for line in (remove-duplicates
+                                  (sort bucket #'< :key #'fifth)
+                                  :key #'fifth))
                     (for pline previous line)
                     (for ppline previous pline)
                     (match* (ppline pline line)
                             ((nil
                               (list* _ _ _ _ time2 temp _)
                               _)
-                             (format s "~&~a ~a ~a"
+                             (format s "~&~a ~a ~4,2f"
                                      (timestamp-to-unix
                                       (timestamp+
                                        (unix-to-timestamp time2) 9 :hour))
@@ -89,7 +84,7 @@ exec ros -Q -- $0 "$@"
                             (((list* _ _ _ _ time1 _)
                               (list* _ _ _ _ time2 temp _)
                               (list* _ _ _ _ time3 _))
-                             (format s "~&~a ~a ~a"
+                             (format s "~&~a ~a ~4,2f"
                                      (timestamp-to-unix
                                       (timestamp+
                                        (unix-to-timestamp time2) 9 :hour))
@@ -98,36 +93,32 @@ exec ros -Q -- $0 "$@"
                     (finally
                      (match line
                             ((list* _ _ _ _ time3 temp _)
-                             (format s "~&~a ~a ~a"
+                             (format s "~&~a ~a ~4,2f"
                                      (timestamp-to-unix
                                       (timestamp+
                                        (unix-to-timestamp time3) 9 :hour))
                                      temp
                                      MOST-POSITIVE-FIXNUM)))))))
-       ;; (plot #'data
-       ;;       :using '(1 2)
-       ;;       :title (princ-to-string node)
-       ;;       :with :points)
        (plot #'data
-             ;; :using '(1 2)
+             :using '(1 2)
              :title (princ-to-string node)
-             ;; :notitle '()
-             :smooth :csplines
-             ;; :smooth :sbezier
+             :smooth :bezier
              :axes :x1y1
              :with :lines
              :lw 2)))))
 
 (defun draw-jobs (s bucket)
   (plot (lambda ()
-          (iter (for line in (sort bucket #'< :key #'fifth))
+          (iter (for line in (remove-duplicates
+                              (sort bucket #'< :key #'fifth)
+                              :key #'fifth))
                 (for pline previous line)
                 (for ppline previous pline)
                 (match* (ppline pline line)
                   ((nil
                     (list 'funlucy 'jobs 'torque _ time2 jobs)
                     _)
-                   (format s "~&~a ~a ~a"
+                   (format s "~&~a ~a ~4,2f"
                            (timestamp-to-unix
                             (timestamp+
                              (unix-to-timestamp time2) 9 :hour))
@@ -136,7 +127,7 @@ exec ros -Q -- $0 "$@"
                   (((list 'funlucy 'jobs 'torque _ time1 _)
                     (list 'funlucy 'jobs 'torque _ time2 jobs)
                     (list 'funlucy 'jobs 'torque _ time3 _))
-                   (format s "~&~a ~a ~a"
+                   (format s "~&~a ~a ~4,2f"
                            (timestamp-to-unix
                             (timestamp+
                              (unix-to-timestamp time2) 9 :hour))
@@ -145,36 +136,15 @@ exec ros -Q -- $0 "$@"
                 (finally
                  (match line
                         ((list 'funlucy 'jobs 'torque _ time3 jobs)
-                         (format s "~&~a ~a ~a"
+                         (format s "~&~a ~a ~4,2f"
                                  (timestamp-to-unix
                                   (timestamp+
                                    (unix-to-timestamp time3) 9 :hour))
                                  jobs
                                  MOST-POSITIVE-FIXNUM))))))
-        ;; (lambda ()
-        ;;   (iter (for line in bucket)
-        ;;         (for pline previous line)
-        ;;         (for ppline previous pline)
-        ;;         (match* (ppline pline line)
-        ;;           (((list 'funlucy 'jobs 'torque _ time1 _)
-        ;;             (list 'funlucy 'jobs 'torque _ time2 jobs2)
-        ;;             (list 'funlucy 'jobs 'torque _ time3 _))
-        ;;            (format s "~&~a ~a ~a"
-        ;;                    (timestamp-to-unix
-        ;;                     (timestamp+
-        ;;                      (unix-to-timestamp time2) 9 :hour))
-        ;;                    jobs2
-        ;;                    (- time3 time1))
-        ;;            (when (> (- time3 time2) 900) ;; 15 min
-        ;;              (format s "~&~a 1/0 ~a"
-        ;;                      (timestamp-to-unix
-        ;;                       (timestamp+
-        ;;                        (unix-to-timestamp time2) 9 :hour))
-        ;;                      (- time3 time1)))))))
-        ;; :using '(1 2)
+        :using '(1 2)
         :title "Jobs remaining"
-        ;; :smooth :csplines
-        ;; :smooth :sbezier
+        :smooth :bezier
         :axes :x1y2
         :with :lines
         :lw 2))
@@ -186,23 +156,17 @@ exec ros -Q -- $0 "$@"
           (collect it))))
 
 (defun make-pdf (input output offset duration)
-  (with-plots (s :debug t)
+  (with-plots (s)
     (gp-setup :terminal `(,(pathname-type output)
-                           ;; (match (pathname-type output)
-                           ;;   ("png" :pngcairo)
-                           ;;   (it it))
-                           ;; :size :|1200,800|
                            :enhanced
-                           ;; :monochrome
                            :background :rgb "gray75"
                            :font "Times New Roman, 10")
               :title "Temparature Logs in Room 313 (CPU Core Temp)"
-              :key '(:outside :rmargin
+              :key '(:rmargin
                      :spacing 2
                      :horizontal
                      :maxrows 20
-                     :maxcols 1
-                     )
+                     :maxcols 1)
               :autoscale :y2
               :style '(:fill :transparent :solid 0.5)
               :yrange :|[:110]|
@@ -213,7 +177,7 @@ exec ros -Q -- $0 "$@"
               :ytics :nomirror
               :y2label "Queued Jobs"
               :y2tics '()
-              :grid :xy
+              :grid '(:xtics :ytics)
               :xrange (make-keyword
                        (let ((now (timestamp+ (now) (+ 9 offset) :hour)))
                          (format nil "[\"~a\":\"~a\"]"
