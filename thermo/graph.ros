@@ -240,5 +240,7 @@ exec ros -Q -- $0 "$@"
   (declare (ignorable argv))
   (make-pdf input output 1/2 24)
   (make-pdf input output 1/2 (* 24 3))
-  (make-pdf input output 1/2 (* 24 7)))
+  (make-pdf input output 1/2 (* 24 7))
+  (make-pdf input output 1/2 (* 24 7 31))
+  (make-pdf input output 1/2 (* 24 7 31 12)))
 
