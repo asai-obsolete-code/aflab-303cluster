@@ -1,0 +1,13 @@
+#!/bin/bash
+
+echo "Watching PBS scheduler once per minute!"
+
+while :
+do
+    if ! pgrep pbs_sched &> /dev/null
+    then
+        echo "$(date): pbs_sched died, restarting!"
+        service torque-scheduler start
+    fi
+    sleep 60
+done
