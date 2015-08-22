@@ -2,5 +2,5 @@
 
 args=${*:-'.'}
 
-qstat -a | tail -n +6 | grep "$args" | cut -d. -f 1
+qstat -an1 | tail -n +6 | grep "$args" | cut -d. -f 1
 
