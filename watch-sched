@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Watching PBS scheduler once per minute!"
+echo "Watching PBS scheduler & server once per minute!"
 
 while :
 do
@@ -8,6 +8,11 @@ do
     then
         echo "$(date): pbs_sched died, restarting!"
         service torque-scheduler start
+    fi
+    if ! pgrep pbs_server &> /dev/null
+    then
+        echo "$(date): pbs_server died, restarting!"
+        service torque-server start
     fi
     sleep 60
 done
