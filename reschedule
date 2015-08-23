@@ -1,0 +1,29 @@
+#!/bin/bash
+
+period=${1:-30}
+resched_num=${2:-100}
+regex=${3:-Q}
+
+main (){
+    echo "[$(date)] picking $resched_num jobs"
+
+    jobs=$(qgrep $regex | head -n $resched_num)
+
+    echo "[$(date)] holding"
+
+    qhold $jobs
+
+    echo "[$(date)] rescheduling"
+
+    qrls $jobs
+
+    echo "[$(date)] sleep $period"
+
+    sleep $period
+}
+
+while :
+do
+    main
+done
+
