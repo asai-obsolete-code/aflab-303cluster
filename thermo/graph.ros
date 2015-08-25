@@ -146,7 +146,7 @@ exec ros -Q -- $0 "$@"
         :title "Jobs remaining"
         :smooth :bezier
         :axes :x1y2
-        :with :linespoints
+        :with :lines
         :lw 2))
 
 (defun draw-jobs-raw (s bucket)
