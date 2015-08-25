@@ -142,12 +142,13 @@ exec ros -Q -- $0 "$@"
                                    (unix-to-timestamp time3) 9 :hour))
                                  jobs
                                  MOST-POSITIVE-FIXNUM))))))
-        :using '(1 2)
+        :using '(1 2 3)
         :title "Jobs remaining"
-        :smooth :bezier
+        :smooth :acspline
         :axes :x1y2
         :with :lines
-        :lw 2))
+        :lw 2
+        :lc '(:rgb "red")))
 
 (defun draw-jobs-raw (s bucket)
   (plot (lambda ()
@@ -166,7 +167,10 @@ exec ros -Q -- $0 "$@"
         :using '(1 2)
         :notitle '()
         :axes :x1y2
-        :with :points))
+        :with :points
+        :pt 7
+        :lw 0.3
+        :lc '(:rgb "red")))
 
 (defun read-many (line-string)
   (with-input-from-string (s line-string)
