@@ -149,6 +149,25 @@ exec ros -Q -- $0 "$@"
         :with :linespoints
         :lw 2))
 
+(defun draw-jobs-raw (s bucket)
+  (plot (lambda ()
+          (iter (for line in ;; (sort bucket #'< :key #'fifth)
+                     (remove-duplicates
+                              (sort bucket #'< :key #'fifth)
+                              :key #'fifth)
+                     )
+                (match line
+                       ((list 'funlucy 'jobs 'torque _ time2 jobs)
+                        (format s "~&~a ~a" ; ~4,2f
+                                (timestamp-to-unix
+                                 (timestamp+
+                                  (unix-to-timestamp time2) 9 :hour))
+                                jobs)))))
+        :using '(1 2)
+        :notitle '()
+        :axes :x1y2
+        :with :points))
+
 (defun read-many (line-string)
   (with-input-from-string (s line-string)
     (iter (for it = (read s nil nil))
@@ -198,7 +217,10 @@ exec ros -Q -- $0 "$@"
                                    (mapcar #'read-many (read-lines input)))))
     (draw-jobs s
                (remove-if-not #'jobs-line-p
-                              (mapcar #'read-many (read-lines input))))))
+                              (mapcar #'read-many (read-lines input))))
+    (draw-jobs-raw s
+                   (remove-if-not #'jobs-line-p
+                                  (mapcar #'read-many (read-lines input))))))
 
 (defun main (&rest argv)
   (declare (ignorable argv))
