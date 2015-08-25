@@ -186,6 +186,7 @@ exec ros -Q -- $0 "$@"
                      :horizontal
                      :maxrows 20
                      :maxcols 1)
+              :samples 1000
               :autoscale :y2
               :style '(:fill :transparent :solid 0.5)
               :yrange :|[:110]|
