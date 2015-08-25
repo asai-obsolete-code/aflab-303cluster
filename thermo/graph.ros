@@ -146,7 +146,7 @@ exec ros -Q -- $0 "$@"
         :title "Jobs remaining"
         :smooth :bezier
         :axes :x1y2
-        :with :lines
+        :with :linespoints
         :lw 2))
 
 (defun read-many (line-string)
