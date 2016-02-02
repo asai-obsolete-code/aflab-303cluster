@@ -34,7 +34,7 @@ cluster-status (){
         echo -n "["
         withwidth 8 "$(printdots $jobs 8)"
         echo -n "] "
-        freetext=$(ssh $h free -h | awk '/-\/\+/{printf("used: %s free: %s",$3,$4)}')
+        freetext=$(ssh -o "ConnectTimeout 1" $h free -h | awk '/-\/\+/{printf("used: %s free: %s",$3,$4)}')
         withwidth 25 "$freetext"
         echo
     done
