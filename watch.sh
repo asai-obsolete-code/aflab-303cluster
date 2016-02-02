@@ -5,7 +5,7 @@ lib=$(dirname $(readlink -ef $0))/watchlib.sh
 
 sudo=false
 
-while getopts "s" opt
+while getopts ":s" opt
 do
     case ${opt} in
         s) 
