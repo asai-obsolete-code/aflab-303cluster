@@ -42,5 +42,5 @@ cluster-status (){
 
 job-status (){
     qstat -B
-    qstat -rn1 | tail -n +4
+    qstat -rln1 | tail -n +4
 }
