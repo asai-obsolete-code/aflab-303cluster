@@ -1,8 +1,5 @@
 #!/bin/bash
 
-. $(dirname $(readlink -ef $0))/util/gethosts.sh
-hosts=$(cat $HOSTSFILE | sed -e "s/#.*//g")
-
 printdots (){
     for ((i=0;i<$1;i++))
     do
@@ -26,7 +23,7 @@ cluster-status (){
     # withwidth 11 "jobs"
     # withwidth 12 "mem"
     # echo
-    for h in $hosts
+    for h in $((pbsnodes -l free ; pbsnodes -l job-exclusive) | awk '{print $1}')
     do
         jobs=$(pbsnodes $h | grep "jobs = " | tr -cd / | wc -c)
         state=$(pbsnodes $h | awk '/state/{print $3; exit 0}')
