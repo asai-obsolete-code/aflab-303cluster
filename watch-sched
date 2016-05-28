@@ -9,12 +9,12 @@ do
     if ! pgrep pbs_sched &> /dev/null
     then
         echo "$(date): pbs_sched died, restarting!"
-        service torque-scheduler start
+        pbs_sched
     fi
     if ! pgrep pbs_server &> /dev/null
     then
         echo "$(date): pbs_server died, restarting!"
-        service torque-server start
+        pbs_server
     fi
     sleep $sec
 done
