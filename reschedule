@@ -1,8 +1,11 @@
 #!/bin/bash
 
+queue=$(qstat -Q | tail -n +3 | awk '{print $1}')
+nodect=$(qmgr -c "list queue $queue" | awk '/nodect/{print $3}')
+
 period=${1:-30}
-resched_num=${2:-100}
-regex=${3:-Q}
+resched_num=$((nodect*2))
+regex=Q
 
 main (){
     echo "[$(date)] picking $resched_num jobs"
