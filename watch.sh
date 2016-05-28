@@ -23,7 +23,7 @@ watch=${watch:-true}
 if $watch
 then
     export watch=false
-    watch -d -t $0 $@
+    watch -t $0 $@
 else
     cluster-status
     if $sudo

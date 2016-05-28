@@ -27,7 +27,8 @@ cluster-status (){
     do
         jobs=$(pbsnodes $h | grep "jobs = " | tr -cd / | wc -c)
         state=$(pbsnodes $h | awk '/state/{print $3; exit 0}')
-        withwidth 30 "$h($state):"
+
+        withwidth 20 "${h:$(($(echo $h|wc -c)-14)):14}(${state:0:4}):"
         echo -n "["
         withwidth 18 "$(printdots $jobs 18)"
         echo -n "] "
