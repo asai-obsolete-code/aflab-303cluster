@@ -4,7 +4,7 @@ queue=$(qstat -Q | tail -n +3 | awk '{print $1}')
 nodect=$(qmgr -c "list queue $queue" | awk '/nodect/{print $3}')
 
 period=${1:-30}
-resched_num=$((nodect*2))
+resched_num=$((nodect*5))
 regex=Q
 
 main (){
