@@ -29,10 +29,12 @@ cluster-status (){
         state=$(pbsnodes $h | awk '/state/{print $3; exit 0}')
         withwidth 30 "$h($state):"
         echo -n "["
-        withwidth 8 "$(printdots $jobs 8)"
+        withwidth 18 "$(printdots $jobs 18)"
         echo -n "] "
-        freetext=$(ssh -o "ConnectTimeout 1" $h free -h | awk '/-\/\+/{printf("used: %s free: %s",$3,$4)}')
-        withwidth 25 "$freetext"
+        freetext=$(ssh -o "ConnectTimeout 1" $h free -h | awk '/-\/\+/{printf("U+F: %s+%s",$3,$4)}')
+        withwidth 11 "$freetext"
+        uptime=$(echo "Ld:" ; ssh -o "ConnectTimeout 1" $h uptime | sed 's/.*average:\(.*\)/\1/g')
+        withwidth 14 "$uptime"
         echo
     done
 }
