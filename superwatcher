@@ -1,0 +1,7 @@
+#!/bin/bash
+
+
+reschedule 60 &
+watch-sched 60 &
+
+wait
