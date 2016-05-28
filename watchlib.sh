@@ -31,8 +31,8 @@ cluster-status (){
         echo -n "["
         withwidth 18 "$(printdots $jobs 18)"
         echo -n "] "
-        freetext=$(ssh -o "ConnectTimeout 1" $h free -h | awk '/-\/\+/{printf("U+F: %s+%s",$3,$4)}')
-        withwidth 11 "$freetext"
+        freetext=$(ssh -o "ConnectTimeout 1" $h free -h | awk '/-\/\+/{printf("U+F:%s+%s",$3,$4)}')
+        withwidth 13 "$freetext"
         uptime=$(echo "Ld:" ; ssh -o "ConnectTimeout 1" $h uptime | sed 's/.*average:\(.*\)/\1/g')
         withwidth 14 "$uptime"
         echo
