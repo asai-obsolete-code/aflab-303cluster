@@ -1,0 +1,5 @@
+#!/bin/bash
+
+pbsnodes -l down | awk '{print $1}' | while read l ; do
+    sudo qmgr -c "delete node $l"
+done
