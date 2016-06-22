@@ -1,8 +1,8 @@
 #!/bin/bash
 
-log=$(ls /var/spool/torque/server_logs/* | sort -h | tail -n 1)
+log=$(ls /var/spool/torque/server_logs/* | sort -h | tail -n 2)
 
-echo "searching for unknown ips..."
+echo "[$(date)] searching for unknown ips..."
 
 new_ips=$(
     comm -1 -3 \
@@ -14,12 +14,16 @@ new_ips=$(
                 awk '{print $7}' | \
                 cut -d: -f1 | \
                 sed 's/\./-/g' | \
-                awk '{print "ip-"$0}' | tail -n 10 | sort | uniq
+                awk '{print "ip-"$0}' | sort | uniq
             }))
 
-
+echo "[$(date)] searching for unknown ips... Done"
 
 for ip in $new_ips ; do
-    echo "new ip found! : $ip"
-    qmgr -c "create node $ip np=18"
+    echo "[$(date)] new ip found! : $ip --- sending a ping"
+    if ping -c 1 -q $ip &> /dev/null
+    then
+        echo "[$(date)] new ip found! : $ip --- node alive! adding a node"
+        qmgr -c "create node $ip np=18"
+    fi
 done
