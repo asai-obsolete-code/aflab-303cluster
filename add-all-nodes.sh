@@ -9,11 +9,12 @@ new_ips=$(
         <(pbsnodes | grep ^ip- | sort) \
         <({
             grep "svr_is_request" $log | \
+                tail -n 100 | \
                 cut -d";" -f6 | \
                 awk '{print $7}' | \
                 cut -d: -f1 | \
                 sed 's/\./-/g' | \
-                awk '{print "ip-"$0}' | sort | uniq
+                awk '{print "ip-"$0}' | tail -n 10 | sort | uniq
             }))
 
 
