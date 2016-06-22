@@ -8,5 +8,6 @@
 trap 'kill $(jobs -p)' EXIT
 $(dirname $0)/reschedule 60 &
 $(dirname $0)/watch-sched 60 &
+$(dirname $0)/watch-new-nodes 60 &
 
 wait
