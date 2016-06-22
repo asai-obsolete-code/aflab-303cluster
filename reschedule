@@ -1,7 +1,9 @@
 #!/bin/bash
 
 queue=$(qstat -Q | tail -n +3 | awk '{print $1}')
-nodect=$(qmgr -c "list queue $queue" | awk '/nodect/{print $3}')
+echo "queue: $queue"
+nodect=$(pbsnodes | awk '/np/{sum+=$3}END{print sum}')
+echo "nodect: $nodect"
 
 period=${1:-30}
 resched_num=$((nodect*5))
