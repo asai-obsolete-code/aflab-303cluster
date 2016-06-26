@@ -20,7 +20,7 @@ new_ips=$(
 echo "[$(date)] searching for unknown ips... Done"
 
 for ip in $new_ips ; do
-    echo "[$(date)] new ip found! : $ip --- sending a ping"
+    # echo "[$(date)] new ip found! : $ip --- sending a ping"
     if ping -c 1 -q $ip &> /dev/null
     then
         echo "[$(date)] new ip found! : $ip --- node alive! adding a node"
