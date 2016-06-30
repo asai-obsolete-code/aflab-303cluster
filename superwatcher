@@ -5,9 +5,23 @@
     exit 1
 }
 
+
+
+watch (){
+    sec=$1
+    shift
+    while :
+    do
+        $@
+        sleep $sec
+    done
+}
+
 trap 'kill $(jobs -p)' EXIT
-$(dirname $0)/reschedule 60 &
-$(dirname $0)/watch-sched 60 &
-$(dirname $0)/watch-new-nodes 60 &
+
+for com in check-nodes check-sched delete-downs reschedule ; do
+    watch 60 $com &
+done
 
 wait
+

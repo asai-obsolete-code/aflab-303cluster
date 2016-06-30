@@ -1,6 +1,0 @@
-#!/bin/bash
-
-while : ; do
-    $(dirname $0)/add-all-nodes.sh
-    sleep $1
-done

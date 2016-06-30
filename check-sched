@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if ! pgrep pbs_sched &> /dev/null
+then
+    echo "$(date): pbs_sched died, restarting!"
+    pbs_sched
+fi
+if ! pgrep pbs_server &> /dev/null
+then
+    echo "$(date): pbs_server died, restarting!"
+    pbs_server
+fi
+sleep $sec
+

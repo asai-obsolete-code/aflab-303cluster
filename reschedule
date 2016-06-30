@@ -5,30 +5,18 @@ echo "queue: $queue"
 nodect=$(pbsnodes | awk '/np/{sum+=$3}END{print sum}')
 echo "nodect: $nodect"
 
-period=${1:-30}
 resched_num=$((nodect*5))
 regex=Q
 
-main (){
-    echo "[$(date)] picking $resched_num jobs"
+echo "[$(date)] picking $resched_num jobs"
 
-    jobs=$($(dirname $0)/qgrep $regex | head -n $resched_num)
+jobs=$($(dirname $0)/qgrep $regex | head -n $resched_num)
 
-    echo "[$(date)] holding"
+echo "[$(date)] holding"
 
-    qhold $jobs
+qhold $jobs
 
-    echo "[$(date)] rescheduling"
+echo "[$(date)] rescheduling"
 
-    qrls $jobs
-
-    echo "[$(date)] sleep $period"
-
-    sleep $period
-}
-
-while :
-do
-    main
-done
+qrls $jobs
 
