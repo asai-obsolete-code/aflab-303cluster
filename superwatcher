@@ -20,7 +20,7 @@ watch (){
 trap 'kill $(jobs -p)' EXIT
 
 for com in check-nodes check-sched delete-downs reschedule ; do
-    watch 60 $com &
+    watch 60 $(dirname $0)/$com &
 done
 
 wait
