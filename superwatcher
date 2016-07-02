@@ -12,16 +12,18 @@ watch (){
     shift
     while :
     do
-        $@
+        $(dirname $0)/$@
         sleep $sec
     done
 }
 
 trap 'kill $(jobs -p)' EXIT
 
-for com in check-nodes check-sched delete-downs reschedule ; do
-    watch 60 $(dirname $0)/$com &
+for com in check-nodes delete-downs ; do
+    watch 60 $com &
 done
+
+watch 30 check-sched &
 
 wait
 
