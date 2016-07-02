@@ -1,5 +1,6 @@
 #!/bin/bash
 
 pbsnodes -l down | awk '{print $1}' | while read l ; do
+    echo "[$(date)] Deleting node $l"
     sudo qmgr -c "delete node $l"
 done
