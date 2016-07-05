@@ -19,7 +19,7 @@ watch (){
 
 trap 'kill $(jobs -p)' EXIT
 
-for com in check-nodes delete-downs ; do
+for com in check-nodes delete-downs reschedule ; do
     watch 60 $com &
 done
 
