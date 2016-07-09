@@ -5,12 +5,19 @@ echo "queue: $queue"
 nodect=$(pbsnodes | awk '/np/{sum+=$3}END{print sum}')
 echo "nodect: $nodect"
 
-resched_num=$((nodect*5))
+resched_num=$((nodect*2))
 regex=Q
 
 echo "[$(date)] picking $resched_num jobs"
 
 jobs=$($(dirname $0)/qgrep $regex | head -n $resched_num)
+
+if [ $(echo $jobs | wc -w) -lt $resched_num ]
+then
+    echo "[$(date)] not holding: not enough jobs; releasing all jobs"
+    $(dirname $0)/qgrep H | xargs qrls
+    exit 0
+fi
 
 echo "[$(date)] holding"
 
@@ -20,3 +27,4 @@ echo "[$(date)] rescheduling"
 
 qrls $jobs
 
+echo "[$(date)] rescheduling done"
