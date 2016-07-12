@@ -5,7 +5,7 @@
     exit 1
 }
 
-
+parent=$$
 
 watch (){
     sec=$1
@@ -17,7 +17,11 @@ watch (){
     done
 }
 
-trap 'kill $(jobs -p)' EXIT
+handle (){
+    kill -TERM -$(ps -h -o pgid -p $$)
+}
+
+trap handle EXIT
 
 for com in check-nodes delete-downs reschedule ; do
     watch 60 $com &
