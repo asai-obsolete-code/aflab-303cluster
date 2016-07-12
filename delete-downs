@@ -5,7 +5,9 @@ pbsnodes -l down | awk '{print $1}' | while read l ; do
     then
         echo "[$(date)] Do not delete the server node (skipping)"
     else
-        echo "[$(date)] Deleting node $l"
-        sudo qmgr -c "delete node $l"
+        echo "[$(date)] Deleting node $l : rerunning jobs"
+        $(dirname $0)/qgrep $l | xargs qrerun -f
+        echo "[$(date)] Deleting node $l : deleting node"
+        qmgr -c "delete node $l"
     fi
 done
