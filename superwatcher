@@ -27,7 +27,7 @@ for com in check-nodes delete-downs reschedule ; do
     watch 60 $com &
 done
 
-watch 30 check-sched &
+watch 10 check-sched &
 
 wait
 
