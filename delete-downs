@@ -9,5 +9,6 @@ pbsnodes -l down | awk '{print $1}' | while read l ; do
         $(dirname $0)/qgrep $l | xargs qrerun -f
         echo "[$(date)] Deleting node $l : deleting node"
         qmgr -c "delete node $l"
+        echo "[$(date)] Deleting node $l : done"
     fi
 done

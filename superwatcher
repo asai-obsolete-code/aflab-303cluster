@@ -23,7 +23,7 @@ handle (){
 
 trap handle EXIT
 
-for com in check-nodes delete-downs reschedule ; do
+for com in check-nodes reschedule ; do
     watch 60 $com &
 done
 

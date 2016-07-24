@@ -24,6 +24,6 @@ for ip in $new_ips ; do
     if ping -c 1 -q $ip &> /dev/null
     then
         echo "[$(date)] new ip found! : $ip --- node alive! adding a node"
-        qmgr -c "create node $ip np=17"
+        qmgr -c "create node $ip np=16"
     fi
 done
